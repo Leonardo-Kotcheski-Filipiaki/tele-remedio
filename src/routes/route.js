@@ -1,40 +1,65 @@
+/**
+ * Imports
+ */
 import { config } from 'dotenv';
 config();
 import {Router} from 'express'
 import jwt from 'jsonwebtoken';
 import authTokenValidation from '../middleware/authorizatonToken.js';
+import {registrarUsuarioCon, realizarLogin} from '../controller/userController.js';
+
 const router = Router();
 
-const pedidos = {
-    id: '001321',
-    itens: [
-        'Homeprasol',
-        'Hibuprofeno'
-    ],
-    id_cliete: '124124'
-};
-
-router.post('/login', (req, res) => {
+/**
+ * Rota que registra um novo usuario
+ * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
+ */
+router.post('/register', (req, res) => {
     try {
-        const username = req.body;
+        const user = req.body;
         
-        const user = {
-            name: username
-        };
-        
-        const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-        res.json({access_token: access_token});
+        registrarUsuarioCon(user).then(result => {
+            if(Object.keys(result).includes('msg')){
+                res.status(result.code).send(result.msg);
+            }
+        }).catch(err => {
+            res.send(err);
+        })
         
     } catch (e) {
         res.status(404).send(e);
     }
 })
 
-router.get('/dados', authTokenValidation, (req, res) => {
-    console.log(req.headers['Authorization'])
-    res.json(pedidos);
-})
+/**
+ * Rota para realizar login e retornar um acess token
+ * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
+ */
+router.get('/login', (req, res) => {
+    try {
+        const user = req.body;
+        
+        realizarLogin(user).then(result => {
+            if(Object.keys(result).includes('nome') && Object.keys(result).includes('email')){
+                const access_token = jwt.sign(result, process.env.ACCESS_TOKEN_SECRET)
+                res.json({access_token: access_token});
+            } else {
+                if(Object.keys(result).includes('msg') && Object.keys(result).includes('code')){
+                    res.status(result.code).send(result.msg);
+                } else {
+                    res.status(500).send('Erro no servidor interno');
+                }
+            }
+        }).catch(err => {
+            res.send(err);
+        })
 
+        
+        
+    } catch (e) {
+        res.status(404).send(e);
+    }
+})
 
 
 export default router;

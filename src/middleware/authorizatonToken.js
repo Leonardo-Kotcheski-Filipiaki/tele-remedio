@@ -2,6 +2,9 @@ import { config } from 'dotenv';
 config();
 import jwt from 'jsonwebtoken';
 
+/**
+ * Função para validação do token JWT  
+ */
 function authTokenValidation(req, res, next){
     if(req.headers['authorization'].length < 1){
         console.log('passei reto fi')
