@@ -32,7 +32,7 @@ router.post('/register', (req, res) => {
 })
 
 /**
- * Rota para realizar login e retornar um acess token
+ * Rota para realizar login e retornar um access token
  * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
  */
 router.get('/login', (req, res) => {

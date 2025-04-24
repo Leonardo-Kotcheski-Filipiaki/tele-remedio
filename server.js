@@ -2,6 +2,7 @@ import e from 'express';
 import router from './src/routes/route.js';
 import bodyParser from 'body-parser';
 import mysql from 'mysql2'
+import gerarJwtHas from './assets/extra/jwtGeneratorHash.js';
 
 export const conn = mysql.createConnection({
     host: process.env.DATABASE_HOST,
