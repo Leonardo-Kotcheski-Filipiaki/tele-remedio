@@ -7,7 +7,6 @@ import jwt from 'jsonwebtoken';
  */
 function authTokenValidation(req, res, next){
     if(req.headers['authorization'].length < 1){
-        console.log('passei reto fi')
         res.status(404).send('No authorization code');
     } else {
         const authToken = req.headers['authorization'];
