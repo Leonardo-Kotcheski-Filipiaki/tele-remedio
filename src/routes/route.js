@@ -6,6 +6,7 @@ config();
 import {Router} from 'express'
 import jwt from 'jsonwebtoken';
 import authTokenValidation from '../middleware/authorizatonToken.js';
+import gerarJwtHas from '../../assets/helpers/jwtGeneratorHash.js';
 import {registrarUsuarioCon, registrarAdministradorCon, realizarLogin, realizarLoginAdm} from '../controller/userController.js';
 
 const router = Router();
@@ -103,6 +104,10 @@ router.get('/login/administrador/interno', (req, res) => {
         res.status(404).send(e);
     }
 })
+
+router.get('/gerarjwthash', (req, res) => {
+    res.send(gerarJwtHas());
+});
 
 
 export default router;
