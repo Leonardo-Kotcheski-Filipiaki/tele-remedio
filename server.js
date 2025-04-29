@@ -2,7 +2,7 @@ import e from 'express';
 import router from './src/routes/route.js';
 import bodyParser from 'body-parser';
 import mysql from 'mysql2'
-import gerarJwtHas from './assets/extra/jwtGeneratorHash.js';
+//import gerarJwtHas from './assets/extra/jwtGeneratorHash.js';  Utilizar para gerar código hash para uso de ACCESS_TOKEN_SECRET no .env
 
 export const conn = mysql.createConnection({
     host: process.env.DATABASE_HOST,
