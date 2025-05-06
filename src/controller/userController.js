@@ -1,7 +1,7 @@
 /**
  * Imports
  */
-import {registrarAdministrador, logarAdm, registrarUsuario, logar} from "../model/loginModel.js";
+import {registrarAdministrador, logarAdm, registrarUsuario, logar, alterarStatusUsuarios} from "../model/usuariosModel.js";
 
 /**
  * Função no controller para registro do usuario
@@ -54,7 +54,6 @@ export async function realizarLogin(data){
     }).catch(err => {
         result = err
     })
-    
     return result;
 }
 export async function realizarLoginAdm(data){
@@ -75,3 +74,13 @@ export async function realizarLoginAdm(data){
     return result;
 }
 
+export async function alterarStatusCon(data){
+    let result;
+    await alterarStatusUsuarios(data).then(res => {
+        result = res;
+    }).catch(err => {
+        result = err
+    });
+
+    return result;
+}
