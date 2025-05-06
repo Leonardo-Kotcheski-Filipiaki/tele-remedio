@@ -372,7 +372,13 @@ export async function alterarStatusUsuarios(data){
             }
             let keysData = Object.keys(data);
             if(keysData.includes('status') && keysData.includes('user_id') && keysData.includes('tipo')) {
-                let query = `UPDATE ${data.tipo} SET status = ? WHERE ${data.tipo == 'administradores' ? 'idadministradores' : 'user_id'} = ?`;
+                if((data.tipo.toLowerCase() != 'administradores') && (data.tipo.toLowerCase() != "usuarios")){
+                    reject({
+                        msg: "A informação de tipo deve ser 'administradores' (Minusculo) ou 'usuarios' (Minusculo)",
+                        code: 401
+                    });
+                }
+                let query = `UPDATE ${data.tipo.toLowerCase()} SET status = ? WHERE ${data.tipo == 'administradores' ? 'idadministradores' : 'user_id'} = ?`;
                 conn.connect();
                 conn.query(query, [parseInt(data.status), parseInt(data.user_id)], (err, res) => {
                     if(err){
