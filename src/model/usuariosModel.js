@@ -1,7 +1,7 @@
 /**
  * imports
  */
-import {object, z} from 'zod';
+import {z} from 'zod';
 import {conn} from '../../server.js';
 import cpfValidator from '../../assets/helpers/cpfValidator.js';
 /**
@@ -105,7 +105,7 @@ export async function registrarUsuario(data){
                                     msg: "Um usuário já existe com as informações passadas!",
                                     code: 401
                                 });
-                            }
+                            };
                         };
                         reject({
                             msg: `Ocorreu um erro no registro do usuario. ${err}`,
@@ -130,7 +130,7 @@ export async function registrarUsuario(data){
                         code: 401
                     });
                 }, 20000);
-            }
+            };
         }catch(err){
             reject({
                 msg: `Ocorreu um erro ${err}`,
@@ -138,9 +138,9 @@ export async function registrarUsuario(data){
             });
         };
             
-    })
+    });
        
-}
+};
 
 /**
  * Função que retorna uma promisse para registro do usuário administrador e conexão com o banco de dados.
@@ -154,8 +154,8 @@ export async function registrarAdministrador(data){
                 resolve({
                     msg: "Não foram recebidas informações suficiêntes para registro",
                     code: 401 
-                })
-            }
+                });
+            };
             let result = 0;
             await validaInfos(data, admUserRegistro).then(res => {
                 result = res;
@@ -237,9 +237,9 @@ export async function registrarAdministrador(data){
        
 }
 /**
- * Função que retorna uma promisse para login do usuario e conexão com o banco de dados.
+ * Função que retorna uma promisse para login do usuário e conexão com o banco de dados.
  * @author Leonardo Kotches Filipiaki devleonardokofi
- * @param {Object} user Dados do usuario para login, é esperado um objeto.
+ * @param {Object} user Dados do usuário para login, é esperado um objeto.
  */
 export async function logar(user){
     return await new Promise(async (resolve, reject) => {
@@ -256,7 +256,7 @@ export async function logar(user){
                 conn.query(sql, [user.nome, user.senha], (err, res) => {
                     if(err){
                         reject({
-                            msg: "Ocorreu um erro no retorno do usuario.",
+                            msg: "Ocorreu um erro no retorno do usuário.",
                             code: 401
                         });
                     } else if (res.length == 1){;
@@ -265,7 +265,7 @@ export async function logar(user){
                         });
                     } else {;
                         reject({
-                            msg: "Não foi encontrado um usuario com as credenciais passadas",
+                            msg: "Não foi encontrado um usuário com as credenciais passadas",
                             code: 401
                         })
                     }
@@ -273,7 +273,7 @@ export async function logar(user){
     
                 setTimeout(() => {
                     reject({
-                        msg: "Ocorreu um erro no retorno dos dados do usuario",
+                        msg: "Ocorreu um erro no retorno dos dados do usuário",
                         code: 401
                     });
                 }, 10000)
@@ -295,9 +295,9 @@ export async function logar(user){
 
 
 /**
- * Função que retorna uma promisse para login do usuario administrador e conexão com o banco de dados.
+ * Função que retorna uma promisse para login do usuário administrador e conexão com o banco de dados.
  * @author Leonardo Kotches Filipiaki devleonardokofi
- * @param {Object} user Dados do usuario administrador para login, é esperado um objeto.
+ * @param {Object} user Dados do usuário administrador para login, é esperado um objeto.
  */
 export async function logarAdm(user){
     return await new Promise(async (resolve, reject) => {
@@ -315,7 +315,7 @@ export async function logarAdm(user){
                 conn.query(sql, [user.nome, user.senha, user.cpf], (err, res) => {
                     if(err){
                         reject({
-                            msg: "Ocorreu um erro no retorno do usuario.",
+                            msg: "Ocorreu um erro no retorno do usuário.",
                             code: 401
                         });
                     } else if (res.length == 1){;
@@ -324,7 +324,7 @@ export async function logarAdm(user){
                         });
                     } else {
                         reject({
-                            msg: "Não foi encontrado um usuario com as credenciais passadas",
+                            msg: "Não foi encontrado um usuário com as credenciais passadas",
                             code: 401
                         })
                     }
@@ -332,7 +332,7 @@ export async function logarAdm(user){
     
                 setTimeout(() => {
                     reject({
-                        msg: "Ocorreu um erro no retorno dos dados do usuario",
+                        msg: "Ocorreu um erro no retorno dos dados do usuário",
                         code: 401
                     });
                 }, 10000)
@@ -356,11 +356,63 @@ export async function logarAdm(user){
         }
     })
 }
+/**
+ * Função para alterar o status do usuário
+ * @author Leonardo Kotches Filipiaki devleonardokofi
+ * @param {Object} data É espero o id do usuário a ser alterado e o valor, se 0 para desativar ou 1 para ativar
+ */
+export async function alterarStatusUsuarios(data){
+    return await new Promise(async (resolve, reject) => {
+        try {
+            if(!data){
+                reject({
+                    msg: "Não foram recebidos dados para realizar a solicitação",
+                    code: 500
+                });
+            }
+            let keysData = Object.keys(data);
+            if(keysData.includes('status') && keysData.includes('user_id') && keysData.includes('tipo')) {
+                let query = `UPDATE ${data.tipo} SET status = ? WHERE ${data.tipo == 'administradores' ? 'idadministradores' : 'user_id'} = ?`;
+                conn.connect();
+                conn.query(query, [parseInt(data.status), parseInt(data.user_id)], (err, res) => {
+                    if(err){
+                        reject({
+                            msg: `Ocorreu um erro durante a alteração dos dados ${err}`,
+                            code: 500
+                        });
+                    }else if(res.info.includes('Changed: 0')){
+                        resolve({
+                            msg: `Status não alterado pois o usuário já está no estado que quer determinar`,
+                            code: 200
+                        });
+                    }else if(res.affectedRows == 1){
+                        resolve({
+                            msg: `Status alterado para "${data.status == 1 ? 'Ativo' : 'Desativado'}"!`,
+                            code: 200
+                        });
+                    };
+                })
+            } else {
+                reject({
+                    msg: `Está faltando dados para realizar a solicitação, segue o que já se possui: ${keysData}`,
+                    code: 401
+                });
+            }
+
+        } catch (error) {
+            resolve({
+                msg: `Um erro ocorreu durante a alteração dos dados ${error}`,
+                code: 401
+            })
+        }
+    })
+}
 
 /**
- * Função que realiza a validação dos dados do usuario para registro.
+ * Função que realiza a validação dos dados do usuário para registro.
  * @author Leonardo Kotches Filipiaki devleonardokofi
- * @param {Object} user Dados do usuario para registro, é esperado um objeto para parse com o Objeto de validação User
+ * @param {Object} user Dados do usuário para registro, é esperado um objeto para comparação com o Objeto de validação respectivo ao tipo de usuário.
+ * @param {object} validador Objeto para comparação com os dados recebidos.
  */
 export async function validaInfos(user, validador){
     try{
@@ -391,4 +443,37 @@ export async function validaInfos(user, validador){
             code: 401
         };
     }
+}
+
+/**
+ * Função que realiza a validação de usuarios adm
+ * @author Leonardo Kotches Filipiaki devleonardokofi
+ * @param {Object} id_adm id de identificação de administrador
+ */
+export async function validaAdministradores(id_adm){
+    return new Promise(async (resolve, reject) => {
+        try{
+            conn.connect();
+            conn.query('SELECT a.nome FROM administradores a WHERE a.idadministradores = ? AND a.status = 1', [id_adm], (err, res) => {
+                if(err){
+                    reject({
+                        msg: "Ocorreu um erro na validação do administrador responsável.",
+                        code: 401
+                    });
+                } else if (res.length == 1){;
+                    resolve(200);
+                } else {
+                    reject({
+                        msg: "Este usuário administrador não foi encontrado ou está desativado.",
+                        code: 401
+                    })
+                }
+            });
+        }catch(err){
+            return {
+                msg: `Um erro ocorreu na validação dos dados ${err}`,
+                code: 401
+            };
+        }
+    })
 }
