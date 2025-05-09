@@ -100,8 +100,8 @@ CREATE TABLE IF NOT EXISTS `teleremedio`.`pedidos_estoque` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-INSERT INTO administradores(nome, senha, CPF, email) VALUES('ADM DEFAULT', '19222', '00000000000', 'admdefault@empress.com');
+INSERT INTO administradores(nome, senha, CPF, email) VALUES('ADM DEFAULT', '19222', '13173485084', 'admdefault@empress.com');
 
 SELECT * FROM administradores;
 SELECT * FROM usuarios;
-DROP DATABASE teleremedio;
+

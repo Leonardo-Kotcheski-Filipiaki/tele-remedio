@@ -279,13 +279,13 @@ export async function logar(user){
                 }, 10000)
                     
             } else {
-                resolve({
+                reject({
                         msg: 'Um erro ocorreu na validação dos dados',
                         code: 401
                 })
             }
         } catch (error) {
-            resolve({
+            reject({
                 msg: 'Um erro ocorreu na validação dos dados',
                 code: 401
             })
@@ -313,12 +313,14 @@ export async function logarAdm(user){
                 let sql = "SELECT a.idadministradores, a.nome, a.CPF, a.email FROM administradores a WHERE a.nome = ? && a.senha = ? && a.cpf = ?";
                 conn.connect();
                 conn.query(sql, [user.nome, user.senha, user.cpf], (err, res) => {
+                    
                     if(err){
                         reject({
                             msg: "Ocorreu um erro no retorno do usuário.",
                             code: 401
                         });
-                    } else if (res.length == 1){;
+                    } else if (res.length == 1){
+                        
                         resolve({
                             user: res[0]
                         });
@@ -338,18 +340,18 @@ export async function logarAdm(user){
                 }, 10000)
                     
             } else if(result == 24){
-                resolve({
+                reject({
                     msg: 'O CPF inserido é inválido!',
                     code: 401
                 })
             } else {
-                resolve({
+                reject({
                     msg: 'Um erro ocorreu na validação dos dados',
                     code: 401
                 })
             }
         } catch (error) {
-            resolve({
+            reject({
                 msg: `Um erro ocorreu na validação dos dados ${error}`,
                 code: 401
             })
