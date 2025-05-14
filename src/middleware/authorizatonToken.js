@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 config();
 import jwt from 'jsonwebtoken';
-import { validaAdministradores } from '../model/usuariosModel.js';
+import Usuario from '../model/Usuarios.js';
 /**
  * Função para validação do token JWT  
  */
@@ -35,7 +35,8 @@ export function authTokenValidationAdm(req, res, next){
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
             if(err) return res.status(403).send('Token não validado, acesso negado!');
             if(Object.keys(user).includes('idadministradores')){
-                validaAdministradores(user.idadministradores).then(result => {
+                const u = new Usuario(0);
+                u.validaAdministradores(user.idadministradores).then(result => {
                     if(result == 200){
                         req.user = user;
                         next();

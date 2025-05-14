@@ -6,7 +6,7 @@ config();
 import {Router} from 'express'
 import jwt from 'jsonwebtoken';
 import {authTokenValidation, authTokenValidationAdm} from '../middleware/authorizatonToken.js';
-import gerarJwtHas from '../../assets/helpers/jwtGeneratorHash.js';
+import gerarJwtHas from '../../assets/utils/jwtGeneratorHash.js';
 import { registrarItemCon, listarItemCon, alterarListagem } from '../controller/estoqueController.js';
 import { alterarStatusCon, realizarLogin, realizarLoginAdm, registrarAdministradorCon, registrarUsuarioCon } from '../controller/userController.js';
 const router = Router();

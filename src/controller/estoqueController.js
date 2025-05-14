@@ -1,7 +1,8 @@
 /**
  * Imports
  */
-import { registrarItem, listarItem, listagem } from "../model/estoqueModel.js";
+import Estoque from "../model/Estoque.js";
+
 
 /**
  * Função no controller para registro do item no estoque
@@ -9,8 +10,9 @@ import { registrarItem, listarItem, listagem } from "../model/estoqueModel.js";
  * @param {Object} item Dados do item para registro, é esperado um objeto.
  */
 export async function registrarItemCon(item){
+    const e = new Estoque(item);
     let result;
-    await registrarItem(item).then(res => {
+    await e.registrarItem(item).then(res => {
         result = res;
     }).catch(err => {
         result = err
@@ -19,6 +21,7 @@ export async function registrarItemCon(item){
     return result;
 }
 
+
 /**
  * Função que retorna itens da tabela estoque
  * @author Leonardo Kotches Filipiaki devleonardokofi
@@ -26,8 +29,11 @@ export async function registrarItemCon(item){
  * @returns JSON com os dados do banco
  */
 export async function listarItemCon(valor = 0){
+    const e = new Estoque(0);
     let result;
-    await listarItem(valor).then(res => {
+    
+    await e.listarItem(valor).then(res => {
+        
         result = res;
     }).catch(err => {
         result = err
@@ -42,9 +48,9 @@ export async function listarItemCon(valor = 0){
  * @returns Mensagem de respota
  */
 export async function alterarListagem(item){
-    
+    const e = new Estoque(item);
     let result;
-    await listagem(item).then(res => {
+    await e.listagem(item).then(res => {
         result = res;
     }).catch(err => {
         result = err

@@ -1,7 +1,7 @@
 /**
  * Imports
  */
-import {registrarAdministrador, logarAdm, registrarUsuario, logar, alterarStatusUsuarios} from "../model/usuariosModel.js";
+import Usuarios from "../model/Usuarios.js";
 
 /**
  * Função no controller para realizar chamada dp model para
@@ -10,8 +10,9 @@ import {registrarAdministrador, logarAdm, registrarUsuario, logar, alterarStatus
  * @param {Object} data Dados do usuario para registro, é esperado um objeto.
  */
 export async function registrarUsuarioCon(data){
+    const u = new Usuarios(data);
     let result;
-    await registrarUsuario(data).then(res => {
+    await u.registrarUsuario(data).then(res => {
         result = res;
     }).catch(err => {
         result = err
@@ -27,8 +28,9 @@ export async function registrarUsuarioCon(data){
  * @param {Object} data Dados do administrador para registro, é esperado um objeto.
  */
 export async function registrarAdministradorCon(data){
+    const u = new Usuarios(data);
     let result;
-    await registrarAdministrador(data).then(res => {
+    await u.registrarAdministrador(data).then(res => {
         result = res;
     }).catch(err => {
         result = err
@@ -43,8 +45,9 @@ export async function registrarAdministradorCon(data){
  * @param {Object} data Dados do usuario para login, é esperado um objeto.
  */
 export async function realizarLogin(data){
+    const u = new Usuarios(data);
     let result;
-    await logar(data).then(res => {
+    await u.logar(data).then(res => {
         if(Object.keys(res).includes('user')){
             result = res.user
         } else {
@@ -65,8 +68,9 @@ export async function realizarLogin(data){
  * @param {Object} data Dados do usuario para login, é esperado um objeto.
  */
 export async function realizarLoginAdm(data){
+    const u = new Usuarios(data);
     let result;
-    await logarAdm(data).then(res => {
+    await u.logarAdm(data).then(res => {
         if(Object.keys(res).includes('user')){
             result = res.user
         } else {
@@ -89,8 +93,9 @@ export async function realizarLoginAdm(data){
  * @param {Object} data Dados do usuário/adm, é esperado um objeto.
  */
 export async function alterarStatusCon(data){
+    const u = new Usuarios(data);
     let result;
-    await alterarStatusUsuarios(data).then(res => {
+    await u.alterarStatusUsuarios(data).then(res => {
         result = res;
     }).catch(err => {
         result = err
