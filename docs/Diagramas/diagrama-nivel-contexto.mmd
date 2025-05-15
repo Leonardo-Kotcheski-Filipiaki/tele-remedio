@@ -8,11 +8,6 @@ flowchart TB
         A1[Dashboard Web]
     end
     Sistema["Sistema de Entrega Gratuita de Remédios"]
-    Externo["Sistema de Saúde (APIs Públicas)"]
-    Entregador["Aplicativo de Entrega"]
 
     Usuario -->|Realiza cadastro, solicita medicamentos, acompanha pedidos| Sistema
     Administrador -->|Gerencia usuários, pedidos, estoque e entregas| Sistema
-    Sistema -->|Consulta disponibilidade e dados| Externo
-    Sistema -->|Envia pedidos para entrega| Entregador
-
