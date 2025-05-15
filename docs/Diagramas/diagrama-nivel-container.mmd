@@ -1,0 +1,25 @@
+%% Diagrama C4 - Nível de Container
+flowchart TD
+    subgraph Frontend [Frontend]
+        FE1[Aplicativo Móvel - Flutter]
+        FE2[Portal Web - React]
+        FE3[Dashboard Admin - React]
+    end
+    subgraph Backend [Backend - API Rest]
+        BE1[Gerenciamento de Usuários]
+        BE2[Controle de Medicamentos]
+        BE3[Gestão de Pedidos]
+        BE4[Logística de Entrega]
+        BE5[Integração com APIs Públicas]
+    end
+    DB[(Banco de Dados - PostgreSQL)]
+    ServicoEntrega[Serviço de Entrega - Roteirização]
+
+    Cid[Usuário] -->|Acessa via web ou mobile| Frontend
+    Adm[Servidor de Saúde] -->|Acessa via web| Frontend
+
+    Frontend -->|Requisições HTTP| Backend
+    Backend -->|Consultas e Atualizações| DB
+    Backend -->|Gerencia Logística| ServicoEntrega
+    ServicoEntrega -->|Entrega medicamentos| Cid
+    Backend -->|Consulta a sistemas externos| Externo
