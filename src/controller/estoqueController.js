@@ -10,15 +10,20 @@ import Estoque from "../model/Estoque.js";
  * @param {Object} item Dados do item para registro, é esperado um objeto.
  */
 export async function registrarItemCon(item){
-    const e = new Estoque();
-    let result;
-    await e.registrarItem(item).then(res => {
-        result = res;
-    }).catch(err => {
-        result = err
-    })
+    try {
+        const e = new Estoque();
+        let result;
+        await e.registrarItem(item).then(res => {
+            result = res;
+        }).catch(err => {
+            result = err
+        })
+        
+        return result;
+    } catch (error) {
+        console.log(error)
+    }
     
-    return result;
 }
 
 
@@ -33,7 +38,6 @@ export async function listarItemCon(valor = 0){
     let result;
     
     await e.listarItem(valor).then(res => {
-        
         result = res;
     }).catch(err => {
         result = err

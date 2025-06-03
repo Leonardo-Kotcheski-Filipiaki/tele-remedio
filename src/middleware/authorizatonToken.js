@@ -6,19 +6,24 @@ import Usuario from '../model/Usuarios.js';
  * Função para validação do token JWT  
  */
 export function authTokenValidation(req, res, next){
-    if(req.headers['authorization'].length < 1){
-        res.status(404).send('No authorization code');
-    } else {
-        const authToken = req.headers['authorization'];
-        const token = authToken != undefined ? authToken : null;
-        if(token == null || token.length == 0) return res.status(404);
-        
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            if(err) return res.status(403).send('Token não validado, acesso negado!');
-            req.user = user;
-            next();
-        })
-    }   
+    try {
+        if(req.headers['authorization'].length < 1){
+            res.status(404).send('No authorization code');
+        } else {
+            const authToken = req.headers['authorization'];
+            const token = authToken != undefined ? authToken : null;
+            if(token == null || token.length == 0) return res.status(404);
+            
+            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+                if(err) return res.status(403).send('Token não validado, acesso negado!');
+                req.user = user;
+                next();
+            })
+        }   
+    } catch (error) {
+        console.log('erro' + error)
+    }
+    
 }
 
 /**

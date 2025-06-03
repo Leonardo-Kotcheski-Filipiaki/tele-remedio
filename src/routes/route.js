@@ -9,6 +9,7 @@ import {authTokenValidation, authTokenValidationAdm} from '../middleware/authori
 import gerarJwtHas from '../../assets/utils/jwtGeneratorHash.js';
 import { registrarItemCon, listarItemCon, alterarListagem, alterarQuantidade } from '../controller/estoqueController.js';
 import { alterarStatusCon, realizarLogin, realizarLoginAdm, registrarAdministradorCon, registrarUsuarioCon, listarUsuariosCon } from '../controller/userController.js';
+import { registrarReq } from '../controller/pedidosController.js';
 const router = Router();
 
 
@@ -130,7 +131,6 @@ router.get('/listar/usuarios/todos', authTokenValidationAdm, (req, res) => {
                 res.send(err);
             });
         } else {
-            console.log(req.query.tipo)
             listarUsuariosCon().then(result => {
                 if(Object.keys(result).includes('content')){
                     res.status(result.code).send(result.content)
@@ -188,10 +188,10 @@ router.get('/gerarjwthash', (req, res) => {
  * Rota que registra um novo item no estoque
  * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
  */
-router.post('/registro/item/:criador', authTokenValidationAdm, (req, res) => {
+router.post('/registro/item', authTokenValidationAdm, (req, res) => {
     try {
         const item = req.body;
-        item['administradores_idadministradores'] = parseInt(req.params.criador);
+        item['criado_por'] = parseInt(req.query.criador);
         registrarItemCon(item).then(result => {
             if(Object.keys(result).includes('msg')){
                 res.status(result.code).send(result.msg);
@@ -296,5 +296,29 @@ router.patch('/alterar/quantidade', authTokenValidationAdm, (req, res) => {
         res.status(404).send(e);
     };
 });
+// #endregion
+
+// #region Rotas para pedidos
+    /**
+     * Rota que registra um novo pedido
+     * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
+     */
+    router.post('/registro/pedido', authTokenValidation, (req, res) => {
+        try {
+            const pedido = req.body;
+            pedido['criador'] = parseInt(req.query.criador);
+            parseInt(req.query.criador);
+            registrarReq(pedido).then(result => {
+                if(Object.keys(result).includes('msg')){
+                    res.status(result.code).send(result.msg);
+                }
+            }).catch(err => {
+                res.send(err);
+            })
+            
+        } catch (e) {
+            res.status(404).send(e);
+        }
+    })
 // #endregion
 export default router;

@@ -6,20 +6,15 @@ CREATE TABLE IF NOT EXISTS `teleremedio`.`administradores` (
   `nome` VARCHAR(60) NOT NULL,
   `senha` VARCHAR(45) NOT NULL,
   `CPF` VARCHAR(11) NOT NULL,
+  `status` TINYINT NOT NULL DEFAULT 1,
   `email` VARCHAR(128) NOT NULL,
-  `status` INT NOT NULL,
-  `ultimo_alterado_por` INT NULL,
+  `ultimo_alterado_por` INT NULL DEFAULT NULL,
   `criado_por` INT NULL,
   PRIMARY KEY (`idadministradores`),
   UNIQUE INDEX `idadministradores_UNIQUE` (`idadministradores` ASC) VISIBLE,
   UNIQUE INDEX `nome_UNIQUE` (`nome` ASC) VISIBLE,
   UNIQUE INDEX `CPF_UNIQUE` (`CPF` ASC) VISIBLE,
-  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
-  INDEX `fk_criado_por_id` (`criado_por` ASC) VISIBLE,
-  CONSTRAINT `fk_criado_por` FOREIGN KEY (`criado_por`) references `teleremedio`.`administradores` (`idadministradores`)
-  ON DELETE SET NULL
-  ON UPDATE NO ACTION
-  )
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
 ENGINE = InnoDB;
   
 CREATE TABLE IF NOT EXISTS `teleremedio`.`usuarios` (
@@ -68,12 +63,11 @@ CREATE TABLE IF NOT EXISTS `teleremedio`.`estoque` (
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `teleremedio`.`pedidos` (
-  `pedidos_id` INT NOT NULL COMMENT 'Código unico de identificação do pedido, basedo em 6 digitos 123456',
-  `descricao` TEXT NOT NULL COMMENT 'Descrição do pedido',
+  `pedidos_id` INT NOT NULL AUTO_INCREMENT COMMENT 'Código unico de identificação do pedido, basedo em 6 digitos 123456',
+  `items` JSON NOT NULL COMMENT 'Itens do pedido em um JSON',
   `status` VARCHAR(45) NOT NULL DEFAULT 'Em andamento' COMMENT 'Estado do pedido, se está em andamento, concluído, sem sucesso, etc.',
   `data_pedido` TIMESTAMP NOT NULL,
   `data_prevista` DATETIME NOT NULL,
-  `ultimo_alterado_por` INT NULL,
   `usuarios_user_id` INT NOT NULL,
   PRIMARY KEY (`pedidos_id`, `usuarios_user_id`),
   UNIQUE INDEX `pedidos_id_UNIQUE` (`pedidos_id` ASC) VISIBLE,

@@ -79,9 +79,9 @@ export default class Usuarios {
                     result = rej
                 });
                 if(result = 1){
-                    let sql = "INSERT INTO usuarios(nome, senha, cpf, idade, data_nascimento, telefone, email, endereco, ultimo_alterado_por, criado_por) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+                    let sql = "INSERT INTO usuarios(nome, senha, cpf, idade, data_nascimento, telefone, email, endereco, status, ultimo_alterado_por, criado_por) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
                     conn.connect();
-                    conn.query(sql, [data.nome, data.senha, data.cpf, data.idade, data.data_nascimento, data.telefone, data.email, JSON.stringify(data.endereco), data.ultimo_alterado_por, data.criado_por], (err, res) => {
+                    conn.query(sql, [data.nome, data.senha, data.cpf, data.idade, data.data_nascimento, data.telefone, data.email, JSON.stringify(data.endereco), 1, data.ultimo_alterado_por, data.criado_por], (err, res) => {
                         if(err){
                             if(err.code == "ER_DUP_ENTRY"){
                                 if(err.message.includes('CPF')){

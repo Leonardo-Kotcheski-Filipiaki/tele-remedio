@@ -16,7 +16,7 @@ export default class Estoque {
         nome_produto: z.string().nonempty(),
         quantidade: z.number(),
         listar: z.number().nonnegative().min(0).max(1),
-        administradores_idadministradores: z.number().nonnegative()
+        criado_por: z.number().nonnegative()
     });
 
     /**
@@ -29,9 +29,9 @@ export default class Estoque {
             try {
                 await this.validaInfos(item).then(res => {
                     if(res){
-                        let query = "INSERT INTO estoque (nome_produto, quantidade, listar, administradores_idadministradores) VALUES (?, ?, ?, ?)";
+                        let query = "INSERT INTO estoque (nome_produto, quantidade, listar, criado_por) VALUES (?, ?, ?, ?)";
                         conn.connect();
-                        conn.query(query, [item.nome_produto, item.quantidade, item.listar, item.administradores_idadministradores], (err, res) => {
+                        conn.query(query, [item.nome_produto, item.quantidade, item.listar, item.criado_por], (err, res) => {
                             if(err){
                                 if(err.code == "ER_DUP_ENTRY"){
                                     reject({
@@ -72,7 +72,7 @@ export default class Estoque {
     async listarItem(listaveis){
         return new Promise(async (resolve, reject) => {
             try {
-                let query = `SELECT (e.item_id) AS cod, (e.nome_produto) as nome, e.quantidade, (e.listar) as listado, (e.administradores_idadministradores) as criado_por FROM estoque e ${listaveis == 0 ? "WHERE listar = 1": ''}`;
+                let query = `SELECT (e.item_id) AS cod, (e.nome_produto) as nome, e.quantidade, (e.listar) as listado, e.criado_por FROM estoque e ${listaveis == 0 ? "WHERE listar = 1": ''}`;
                 conn.connect();
                 conn.query(query, (err, res) => {
                     if(err){
@@ -194,7 +194,7 @@ export default class Estoque {
                 let result = this.Item.parse(item);
                 if(result){
                     conn.connect();
-                    conn.query('SELECT a.nome FROM administradores a WHERE a.idadministradores = ? AND a.status = 1', [item.administradores_idadministradores], (err, res) => {
+                    conn.query('SELECT a.nome FROM administradores a WHERE a.idadministradores = ? AND a.status = 1', [item.criado_por], (err, res) => {
                         if(err){
                             reject({
                                 msg: "Ocorreu um erro na validação do administrador responsável.",
