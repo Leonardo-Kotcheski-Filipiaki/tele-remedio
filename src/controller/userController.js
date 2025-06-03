@@ -103,3 +103,20 @@ export async function alterarStatusCon(data){
 
     return result;
 }
+
+/**
+ * Função no controller para realizar a chamada do model para listar os usuários
+ * @author Leonardo Kotches Filipiaki devleonardokofi
+ */
+export async function listarUsuariosCon(tipo = 0){
+    const u = new Usuarios();
+    let result;
+    await u.listarUsuarios(tipo).then(res => {
+        console.log(res)
+        result = res;
+    }).catch(err => {
+        result = err
+    });
+
+    return result;
+}

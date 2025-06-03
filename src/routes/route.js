@@ -7,8 +7,8 @@ import {Router} from 'express'
 import jwt from 'jsonwebtoken';
 import {authTokenValidation, authTokenValidationAdm} from '../middleware/authorizatonToken.js';
 import gerarJwtHas from '../../assets/utils/jwtGeneratorHash.js';
-import { registrarItemCon, listarItemCon, alterarListagem } from '../controller/estoqueController.js';
-import { alterarStatusCon, realizarLogin, realizarLoginAdm, registrarAdministradorCon, registrarUsuarioCon } from '../controller/userController.js';
+import { registrarItemCon, listarItemCon, alterarListagem, alterarQuantidade } from '../controller/estoqueController.js';
+import { alterarStatusCon, realizarLogin, realizarLoginAdm, registrarAdministradorCon, registrarUsuarioCon, listarUsuariosCon } from '../controller/userController.js';
 const router = Router();
 
 
@@ -18,10 +18,11 @@ const router = Router();
  * Rota que registra um novo usuario
  * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
  */
-router.post('/registro/usuario/:criador', authTokenValidation, (req, res) => {
+router.post('/registro/usuario', authTokenValidation, (req, res) => {
     try {
         const user = req.body;
-        user['criado_por'] = parseInt(req.params.criador);
+        user['criado_por'] = parseInt(req.query.criador);
+        user['ultimo_alterado_por'] = parseInt(req.query.criador);
         registrarUsuarioCon(user).then(result => {
             if(Object.keys(result).includes('msg')){
                 res.status(result.code).send(result.msg);
@@ -39,10 +40,11 @@ router.post('/registro/usuario/:criador', authTokenValidation, (req, res) => {
  * Rota que registra um novo usuario
  * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
  */
-router.post('/register/administrator/:criador', authTokenValidation, (req, res) => {
+router.post('/register/administrator', authTokenValidation, (req, res) => {
     try {
         const user = req.body;
-        user['criado_por'] = parseInt(req.params.criador);
+        user['criado_por'] = parseInt(req.query.criador);
+        user['ultimo_alterado_por'] = parseInt(req.query.criador);
         registrarAdministradorCon(user).then(result => {
             if(Object.keys(result).includes('msg')){
                 res.status(result.code).send(result.msg);
@@ -109,6 +111,72 @@ router.get('/login/administrador/interno', (req, res) => {
     }
 })
 
+/**
+ * Rota que lista todos os usuários
+ * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
+ */
+router.get('/listar/usuarios/todos', authTokenValidationAdm, (req, res) => {
+    try {
+        if(req.query.tipo != undefined){
+            if(req.query.tipo < 0 && req.query.tipo > 1){
+                res.status(401).send('Tipo deve ser 0 (Para usuários) ou 1 (Para administradores)');
+            }
+            listarUsuariosCon(req.query.tipo).then(result => {
+                if(Object.keys(result).includes('content')){
+                    res.status(result.code).send(result.content)
+                };
+            })
+            .catch(err => {
+                res.send(err);
+            });
+        } else {
+            console.log(req.query.tipo)
+            listarUsuariosCon().then(result => {
+                if(Object.keys(result).includes('content')){
+                    res.status(result.code).send(result.content)
+                };
+            })
+            .catch(err => {
+                res.send(err);
+            });
+        }
+    } catch (e) {
+        res.status(404).send(e);
+    };
+});
+
+/**
+ * Rota que altera o status de um usuário
+ * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
+ */
+router.patch('/alterar/status', authTokenValidationAdm, async (req, res) => {
+    try {
+        if(req.query.status > 1 || req.query.status < 0){
+            res.status(401).send('Apenas é possível alterar para "Ativo" valor 1 ou "Desativado" valor 0');
+        } else if(req.query.tipo == 'administradores' && req.query.id == req.query.idRealizador){
+            res.status(401).send('Não é possível alterar o status do seu próprio usuário, peça para outro administrador faze-lo');
+        }
+
+        const data = {
+            user_id: req.query.id,
+            realizador_id: req.query.idRealizador,
+            tipo: req.query.tipo, //administradores ou usuarios
+            status: req.query.status
+        };
+
+        alterarStatusCon(data).then(result => {
+            if(Object.keys(result).includes('msg')){
+                res.status(result.code).send(result.msg);
+            }
+        })
+        .catch(err => {
+            res.send(err);
+        });
+    } catch (e) {
+        res.status(404).send(e);
+    };
+})
+
 router.get('/gerarjwthash', (req, res) => {
     res.send(gerarJwtHas());
 });
@@ -154,6 +222,7 @@ router.get('/listar/itens', authTokenValidation, (req, res) => {
         res.status(404).send(e);
     };
 });
+
 /**
  * Rota que lista todos os itens do estoque
  * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
@@ -177,14 +246,14 @@ router.get('/listar/itens/todos', authTokenValidationAdm, (req, res) => {
  * Rota para alterar o tipo de listagem do item
  * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
  */
-router.patch('/alterar/listagem/:id', authTokenValidationAdm, (req, res) => {
+router.patch('/alterar/listagem', authTokenValidationAdm, (req, res) => {
     try {
-        if(req.body.valor > 1 || req.body.valor < 0){
+        if(req.query.status > 1 || req.query.status < 0){
             res.status(401).send('Apenas é possível alterar para "Listar" valor 1 ou "Não listado" valor 0');
         };
         const item = {
-            item_id: req.params.id,
-            valor: req.body.valor
+            item_id: req.query.id,
+            valor: req.query.status
         };
         
         alterarListagem(item).then(result => {
@@ -200,22 +269,22 @@ router.patch('/alterar/listagem/:id', authTokenValidationAdm, (req, res) => {
     };
 });
 
-router.patch('/alterar/status/:id/:tipo/:idRealizador', authTokenValidationAdm, async (req, res) => {
+/**
+ * Rota para alterar o tipo de listagem do item
+ * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
+ */
+router.patch('/alterar/quantidade', authTokenValidationAdm, (req, res) => {
     try {
-        if(req.body.status > 1 || req.body.status < 0){
-            res.status(401).send('Apenas é possível alterar para "Ativo" valor 1 ou "Desativado" valor 0');
-        } else if(req.params.tipo == 'administradores' && req.params.id == req.params.idRealizador){
-            res.status(401).send('Não é possível alterar o status do seu próprio usuário, peça para outro administrador faze-lo');
-        }
-
-        const data = {
-            user_id: req.params.id,
-            realizador_id: req.params.idRealizador,
-            tipo: req.params.tipo, //administradores ou usuarios
-            status: req.body.status
+        if(req.query.quant < 0){
+            res.status(401).send('Apenas é possível alterar a quantidade para um número negativo');
         };
-
-        alterarStatusCon(data).then(result => {
+        
+        const item = {
+            item_id: req.query.id,
+            valor: req.query.quant
+        };
+        
+        alterarQuantidade(item).then(result => {
             if(Object.keys(result).includes('msg')){
                 res.status(result.code).send(result.msg);
             }
@@ -226,6 +295,6 @@ router.patch('/alterar/status/:id/:tipo/:idRealizador', authTokenValidationAdm, 
     } catch (e) {
         res.status(404).send(e);
     };
-})
+});
 // #endregion
 export default router;
