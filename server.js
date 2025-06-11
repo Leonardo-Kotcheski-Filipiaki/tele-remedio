@@ -3,6 +3,10 @@ import router from './src/routes/route.js';
 import bodyParser from 'body-parser';
 import mysql from 'mysql2';
 import 'dotenv/config';
+import "swagger-ui-express";
+import "yamljs";
+import swaggerUiExpress from 'swagger-ui-express';
+import YAML from 'yamljs';
 
 const app = e();  // Inicializando o app primeiro
 
@@ -12,6 +16,7 @@ export const conn = mysql.createConnection({
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASS,
     database: process.env.DATABASE_NAME,
+    
 });
 
 conn.connect((err) => {
@@ -27,13 +32,17 @@ conn.connect((err) => {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(router);
+const swaggerDocument = YAML.load("./swagger.yml");
+app.use('/api-docs', swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerDocument))
+
+
 
 app.on('ready', () => {
-    app.listen(3000, 'localhost', (err) => {
+    const port = process.env.PORT || 3000;
+    app.listen(port, (err) => {
         if (err) {
             console.error(`Erro ao iniciar o servidor: ${err}`);
             return;
         }
-        console.log('Servidor rodando em http://localhost:3000');
     });
 });

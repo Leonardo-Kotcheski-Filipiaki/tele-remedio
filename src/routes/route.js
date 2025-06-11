@@ -178,7 +178,7 @@ router.patch('/alterar/status', authTokenValidationAdm, async (req, res) => {
 })
 
 router.get('/gerarjwthash', (req, res) => {
-    res.send(gerarJwtHas());
+    res.status(200).send(gerarJwtHas());
 });
 
 //#endregion
