@@ -44,7 +44,7 @@ export default class Pedidos {
                             if(err) {
                                 reject({
                                     msg: `Algum erro ocorreu! ${JSON.stringify(err)}`,
-                                    code: 500
+                                    code: 401
                                 });
                             } else if (res) {
                                 resolve({
@@ -54,7 +54,7 @@ export default class Pedidos {
                             } else {
                                 reject({
                                     msg: `Algo ocorreu! ${JSON.stringify(err)}`,
-                                    code: 500
+                                    code: 401
                                 });
                             }
                         })

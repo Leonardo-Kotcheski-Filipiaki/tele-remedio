@@ -65,7 +65,10 @@ router.post('/register/administrator', authTokenValidation, (req, res) => {
  */
 router.get('/login', (req, res) => {
     try {
-        const user = req.body;
+        const user = {
+            nome: req.query.nome,
+            senha: req.query.senha
+        }
         realizarLogin(user).then(result => {
 
             if(Object.keys(result).includes('nome') && Object.keys(result).includes('email')){
@@ -92,7 +95,12 @@ router.get('/login', (req, res) => {
  */
 router.get('/login/administrador/interno', (req, res) => {
     try {
-        const user = req.body;
+        const user = {
+            nome: req.query.nome,
+            senha: req.query.senha,
+            cpf: req.query.cpf,
+            email: req.query.email
+        }
         realizarLoginAdm(user).then(result => {
             if(Object.keys(result).includes('idadministradores') && Object.keys(result).includes('nome') && Object.keys(result).includes('CPF') && Object.keys(result).includes('email')){
                 const access_token = jwt.sign(result, process.env.ACCESS_TOKEN_SECRET);

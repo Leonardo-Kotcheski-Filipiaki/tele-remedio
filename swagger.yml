@@ -1,54 +1,414 @@
 openapi: 3.0.0
 info:
-  title: Teleremedio
-  description: API para envio de remédios
+  title: API Documentation
   version: 1.0.0
-servers:
-  - url: http://teleremedio-dze5dxavh6awahaa.canadacentral-01.azurewebsites.net:3000
-    description: Servidor nuvem
 paths:
+  /registro/usuario:
+    post:
+      summary: Registra um novo usuário
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: criador
+          schema:
+            type: integer
+          required: true
+          description: ID do administrador criador do usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                nome: "Beatriz"
+                password: "senha123"
+                cpf: "518.762.901-53"
+                idade: 25
+                data_nascimento: "1999-11-28"
+                telefone: "51987654321"
+                email: "Beatriz@exemplo.com"
+                endereco: 
+                  logradouro: "Avenida das Acácias"
+                  numero: "456"
+                  bairro: "Jardim Primavera"
+                  cidade: "Porto Alegre"
+                  estado: "RS"
 
-  /getjwthash:
-    get:
-      summary: Obtém uma hash jwt
       responses:
         '200':
-          description: Sucesso
+          description: Usuário criado
+        '401':
+          description: Usuário não criado | Um usuário com este CPF já existe! | Um usuário com este nome já existe! | Um usuário com este e-mail já existe! | Um usuário com este telefone já existe! | Um usuário já existe com as informações passadas! | Ocorreu um erro no registro do usuario. + erro | Tempo expirado, tente de novo! | Ocorreu um erro + erro
+  /register/administrator:
+    post:
+      summary: Registra um novo administrador para o sistema
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: criador
+          schema:
+            type: integer
+          required: true
+          description: ID do administrador criador do administrador
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                nome: "Ana"
+                senha: "12345"
+                cpf: "038.298.610-52"
+                email: "Ana@admremedio.com"
+      responses:
+        '200':
+          description: Usuário criado
+        '401':
+          description: Usuário não criado | Um usuário com este CPF já existe! | Um usuário com este nome já existe! | Um usuário com este e-mail já existe! | Um usuário já existe com as informações passadas! | Ocorreu um erro no registro do usuário. | Tempo expirado, tente de novo! | Ocorreu um erro + erro | CPF inválido
+  /login:
+    get:
+      summary: Realiza o login do usuário
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+            format: email
+          required: true
+          description: O email do usuário para login.
+        - in: query
+          name: senha
+          schema:
+            type: string
+            format: password
+          required: true
+          description: A senha do usuário para login.
+      responses:
+        '200':
+          description: Retorna um access_token JWT, nome, idade e email
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Mensagem'
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  nome:
+                    type: string
+                  idade: 
+                    type: integer
+                  email:
+                    type: string
+        '401':
+          description: Ocorreu um erro no retorno do usuário. | Não foi encontrado um usuário com as credenciais passadas | O CPF inserido é inválido! | Um erro ocorreu na validação dos dados | Um erro ocorreu na validação dos dados + erro
+  /login/administrador/interno:
+    get:
+      summary: Realiza o login do administrador
+      parameters:
+        - in: query
+          name: nome
+          schema:
+            type: string
+          required: true
+          description: O nome do administrador para login.
+        - in: query
+          name: senha
+          schema:
+            type: string
+            format: password
+          required: true
+          description: A senha do administrador para login.
+        - in: query
+          name: CPF
+          schema:
+            type: string
+          required: true
+          description: O CPF do administrador para login (formato XXX.XXX.XXX-XX).
+        - in: query
+          name: email
+          schema:
+            type: string
+            format: email
+          required: true
+          description: O email do administrador para login.
+      responses:
+        '200':
+          description: Retorna um access_token para adm, id, nome, cpf e email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  id:
+                    type: integer
+                  nome:
+                    type: string
+                  CPF:
+                    type: string
+                  email:
+                    type: string
+        '401':
+          description: Ocorreu um erro no retorno do usuário. | Não foi encontrado um usuário com as credenciais passadas | Um erro ocorreu na validação dos dados
+  /listar/usuarios/todos:
+    get:
+      summary: Lista todos os usuários
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: tipo
+          schema:
+            type: integer
+            enum: [0, 1]
+          required: false
+          description: '0 para usuários, 1 para administradores'
+      responses:
+        '202':
+          description: Retorna a lista com todos os dados dos usuários a variar do tipo
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  - cod: 1
+                    nome: Beatriz Souza
+                    cpf: '51876290153'
+                    idade: 25
+                    telefone: '51987654321'
+                    data_nascimento: '1999-11-27T02:00:00.000Z'
+                    email: Beatriz@exemplo.com
+                    endereco:
+                      bairro: Jardim Primavera
+                      cidade: Porto Alegre
+                      estado: RS
+                      numero: '456'
+                      logradouro: Avenida das Acácias
+                    status: 1
+                    criado_por: 1
+                  - cod: 2
+                    nome: Carlos Henrique Rocha
+                    cpf: '70239404180'
+                    idade: 31
+                    telefone: '21998765432'
+                    data_nascimento: '1994-07-14T03:00:00.000Z'
+                    email: carlos.rocha@email.com
+                    endereco:
+                      bairro: Centro
+                      cidade: Rio de Janeiro
+                      estado: RJ
+                      numero: '123'
+                      logradouro: Rua das Palmeiras
+                    status: 1
+                    criado_por: 1
+        '401':
+          description: Um erro ocorreu na listagem dos dados + error | Tipo deve ser 0 (Para usuários) ou 1 (Para administradores)
         '404':
-          description: Mensagem não encontrada
+          description: Não foram encontrados dados!
+  /alterar/status:
+    patch:
+      summary: Muda o status do usuário, para desativado (0) ou ativo (1)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: integer
+            enum: [0, 1]
+          required: true
+          description: para desativado (0) ou ativo (1)
+        - in: query
+          name: tipo
+          schema:
+            type: string
+            enum: [administradores, usuarios]
+          required: true
+          description: tipo de usuários (administradores ou usuarios)
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID de quem será alterado
+        - in: query
+          name: idRealizador
+          schema:
+            type: integer
+          required: true
+          description: ID do administrador que fez a mudança, para registro.
+      responses:
+        '200':
+          description: Status não alterado pois o usuário já está no estado que quer determinar | Status alterado para (status desejado)
+        '401':
+          description: Apenas é possível alterar para "Ativo" valor 1 ou "Desativado" valor 0 | Não é possível alterar o status do seu próprio usuário, peça para outro administrador faze-lo | Está faltando dados para realizar a solicitação, segue o que já se possui + lista de informações encontradas | Ocorreu um erro durante a alteração dos dados + erro
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error | Não foram recebidos dados para realizar a solicitação
+  /gerarjwthash:
+    get:
+      summary: Gera um JWT token
+      responses:
+        '200':
+          description: Retorna o JWT Token
+          content:
+            text/plain:
+              schema:
+                type: string
+  /registro/item:
+    post:
+      summary: Registra um novo item no estoque
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: criador
+          schema:
+            type: integer
+          required: true
+          description: ID do criador
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                nome_produto: "Ácido Acetilsalicílico 100mg"
+                quantidade: 10
+                listar: 1
+      responses:
+        '200':
+          description: Item (nome) registrado com sucesso!
+        '400':
+          description: Algum erro ocorreu! + erro
+        '401':
+          description: Este item já existe no estoque! | Um erro ocorreu na validação dos dados + erro
+  /listar/itens:
+    get:
+      summary: Lista itens do estoque (Apenas itens litaveis)
+      security:
+        - bearerAuth: []
+      responses:
+        '202':
+          description: Lista de itens recebida com sucesso!
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-
-    
-
+                type: array
+                items:
+                  type: object
+        '401':
+          description: Algum erro ocorreu! + erro | Um erro ocorreu na listagem dos dados + erro
+        '404':
+          description: Não foram encontrados dados!
+        '500':
+          description: Internal server error
+  /listar/itens/todos:
+    get:
+      summary: Lista todos os itens
+      security:
+        - bearerAuth: []
+      responses:
+        '202':
+          description: Lista de itens recebida com sucesso!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '401':
+          description: Algum erro ocorreu! + erro | Um erro ocorreu na listagem dos dados + erro
+        '404':
+          description: Não foram encontrados dados!
+        '500':
+          description: Internal server error
+  /alterar/listagem:
+    patch:
+      summary: Altera se um item será listado ou não
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: integer
+            enum: [0, 1]
+          required: true
+          description: '0 para não listar, 1 para listar'
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID do item a mudar a listagem
+      responses:
+        '200':
+          description: Listagem não alterada pois o item já está no estado que quer determinar | Listagem alterada para (Listar ou Não listar)
+        '400':
+          description: Algum erro ocorreu! + erro | Um erro ocorreu durante a alteração dos dados + erro
+        '404':
+          description: Internal server error
+  /alterar/quantidade:
+    patch:
+      summary: Altera a quantidade de um item em estoque
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: quant
+          schema:
+            type: integer
+          required: true
+          description: Nova quantidade em estoque para substituir no banco
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID do item a ser alterado
+      responses:
+        '200':
+          description: Não fora realizada alterações efetivas pois o item já está na quantidade determinada | Quantidade alterada para (quantidade definida)
+        '401':
+          description: Algum erro ocorreu! + erro | Um erro ocorreu durante a alteração dos dados + erro
+  /registro/pedido:
+    post:
+      summary: Registra um novo pedido
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: criador
+          schema:
+            type: integer
+          required: true
+          description: ID do criador do pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                items:
+                  - id: 1
+                    qtd: 2
+      responses:
+        '200':
+          description: Pedido registrado com sucesso!
+        '401':
+          description: Algum erro ocorreu + erro | Algo ocorreu + erro | Um erro ocorreu na validação dos dados + erro
 components:
-  schemas:
-    Mensagem:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        message:
-          type: string
-    MensagemInput:
-      type: object
-      required:
-        - message
-      properties:
-        message:
-          type: string
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-    JWTReturn:
-      type: string
-      
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

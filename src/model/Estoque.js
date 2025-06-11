@@ -41,7 +41,7 @@ export default class Estoque {
                                 } else {
                                     reject({
                                         msg: `Algum erro ocorreu! ${JSON.stringify(err)}`,
-                                        code: 500
+                                        code: 400
                                     });
                                 }
                             } else {
@@ -78,13 +78,13 @@ export default class Estoque {
                     if(err){
                         reject({
                             msg: `Algum erro ocorreu! ${JSON.stringify(err)}`,
-                            code: 500
+                            code: 401
                         });
                     } else {
                         if(res.length < 1){
                             reject({
                                 msg: `Não foram encontrados dados!`,
-                                code: 200
+                                code: 404
                             });
                         } else {
                             resolve({
@@ -118,7 +118,7 @@ export default class Estoque {
                     if(err){
                         reject({
                             msg: `Algum erro ocorreu! ${JSON.stringify(err)}`,
-                            code: 500
+                            code: 401
                         });
                     } else {
                         if(res.info.includes('Changed: 0')){
@@ -158,7 +158,7 @@ export default class Estoque {
                     if(err){
                         reject({
                             msg: `Algum erro ocorreu! ${JSON.stringify(err)}`,
-                            code: 500
+                            code: 401
                         });
                     } else {
                         if(res.info.includes('Changed: 0')){

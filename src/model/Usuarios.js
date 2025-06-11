@@ -390,7 +390,7 @@ export default class Usuarios {
                         if(err){
                             reject({
                                 msg: `Ocorreu um erro durante a alteração dos dados ${err}`,
-                                code: 500
+                                code: 401
                             });
                         }else if(res.info.includes('Changed: 0')){
                             resolve({
@@ -446,7 +446,7 @@ export default class Usuarios {
                         if(res.length < 1){
                             reject({
                                 msg: `Não foram encontrados dados!`,
-                                code: 200
+                                code: 404
                             });
                         } else {
                             resolve({
