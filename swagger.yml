@@ -78,10 +78,9 @@ paths:
       summary: Realiza o login do usuário
       parameters:
         - in: query
-          name: email
+          name: nome
           schema:
             type: string
-            format: email
           required: true
           description: O email do usuário para login.
         - in: query
