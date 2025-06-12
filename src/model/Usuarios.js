@@ -307,6 +307,7 @@ export default class Usuarios {
         return await new Promise(async (resolve, reject) => {
             try {
                 let result = 0;
+                console.log(user);
                 await this.validaInfos(user, this.admUser).then(res => {
                     result = res;
                 }).catch(rej => {
