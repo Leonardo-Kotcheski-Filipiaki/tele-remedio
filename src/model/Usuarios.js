@@ -426,8 +426,8 @@ export default class Usuarios {
      * @author Leonardo Kotches Filipiaki devleonardokofi
      * @returns {[object]Array}
      */
-    async listarUsuarios(tipo=0){
-        return new Promise(async (resolve, reject) => {
+    async listarUsuarios(tipo){
+        return new Promise((resolve, reject) => {
             try {
                 let query = 0;
                 //Se 0 lista usuários, se 1 lista administradores

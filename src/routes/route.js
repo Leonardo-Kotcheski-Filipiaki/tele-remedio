@@ -134,22 +134,36 @@ router.get('/listar/usuarios/todos', authTokenValidationAdm, (req, res) => {
                 res.status(401).send('Tipo deve ser 0 (Para usuários) ou 1 (Para administradores)');
             }
             listarUsuariosCon(req.query.tipo).then(result => {
-                if(Object.keys(result).includes('content')){
-                    res.status(result.code).send(result.content)
-                };
+                if(Object.keys(result).includes('msg')){
+                    res.status(result.code).send(result.msg);
+                } else if(Object.keys(result).includes('content')){
+                    res.status(result.code).send(result.content);
+                } else {
+                    res.status(500).send("Algum erro ocorreu! "+result);
+                }
+            }).catch(err => {
+                if(Object.keys(err).includes('code')){
+                    res.status(err.code).send(err.msg);
+                } else {
+                    res.status(500).send("Algum erro ocorreu! "+err);
+                }
             })
-            .catch(err => {
-                res.send(err);
-            });
         } else {
             listarUsuariosCon().then(result => {
-                if(Object.keys(result).includes('content')){
-                    res.status(result.code).send(result.content)
-                };
+                if(Object.keys(result).includes('msg')){
+                    res.status(result.code).send(result.msg);
+                } else if(Object.keys(result).includes('content')){
+                    res.status(result.code).send(result.content);
+                } else {
+                    res.status(500).send("Algum erro ocorreu! "+result);
+                }
+            }).catch(err => {
+                if(Object.keys(err).includes('code')){
+                    res.status(err.code).send(err.msg);
+                } else {
+                    res.status(500).send("Algum erro ocorreu! "+err);
+                }
             })
-            .catch(err => {
-                res.send(err);
-            });
         }
     } catch (e) {
         res.status(404).send(e);

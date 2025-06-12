@@ -112,11 +112,9 @@ export async function listarUsuariosCon(tipo = 0){
     const u = new Usuarios();
     let result;
     await u.listarUsuarios(tipo).then(res => {
-        console.log(res)
         result = res;
     }).catch(err => {
         result = err
-    });
-
+    })
     return result;
 }
