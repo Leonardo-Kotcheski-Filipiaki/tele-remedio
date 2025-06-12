@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "server.js",
   "scripts": {
+    "install": "npm i"
     "start": "server.js"
   },
   "keywords": [],
