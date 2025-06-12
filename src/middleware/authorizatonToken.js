@@ -10,7 +10,7 @@ export function authTokenValidation(req, res, next){
         if(req.headers['authorization'].length < 1){
             res.status(404).send('No authorization code');
         } else {
-            const authToken = req.headers['authorization'];
+            const authToken = req.headers['authorization'].replace('Bearer ', '');
             const token = authToken != undefined ? authToken : null;
             if(token == null || token.length == 0) return res.status(404);
             
