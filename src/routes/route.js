@@ -23,8 +23,9 @@ router.get('/', (req, res) => {
  * Rota que registra um novo usuario
  * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
  */
-router.post('/registro/usuario', authTokenValidation, (req, res) => {
+router.post('/registro/usuario', authTokenValidationAdm, (req, res) => {
     try {
+
         const user = req.body;
         user['criado_por'] = parseInt(req.query.criador);
         user['ultimo_alterado_por'] = parseInt(req.query.criador);
@@ -45,7 +46,7 @@ router.post('/registro/usuario', authTokenValidation, (req, res) => {
  * Rota que registra um novo usuario
  * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
  */
-router.post('/register/administrator', authTokenValidation, (req, res) => {
+router.post('/register/administrator', authTokenValidationAdm, (req, res) => {
     try {
         const user = req.body;
         user['criado_por'] = parseInt(req.query.criador);

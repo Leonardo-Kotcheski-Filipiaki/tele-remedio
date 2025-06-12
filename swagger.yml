@@ -23,7 +23,7 @@ paths:
               type: object
               example:
                 nome: "Beatriz"
-                password: "senha123"
+                senha: "senha123"
                 cpf: "518.762.901-53"
                 idade: 25
                 data_nascimento: "1999-11-28"
@@ -40,7 +40,9 @@ paths:
         '200':
           description: Usuário criado
         '401':
-          description: Usuário não criado | Um usuário com este CPF já existe! | Um usuário com este nome já existe! | Um usuário com este e-mail já existe! | Um usuário com este telefone já existe! | Um usuário já existe com as informações passadas! | Ocorreu um erro no registro do usuario. + erro | Tempo expirado, tente de novo! | Ocorreu um erro + erro
+          description: Usuário não criado | Um usuário com este CPF já existe! | Um usuário com este nome já existe! | Um usuário com este e-mail já existe! | Um usuário com este telefone já existe! | Um usuário já existe com as informações passadas! | Ocorreu um erro no registro do usuario. + erro | Tempo expirado, tente de novo! | Ocorreu um erro + erro | Token de autorização não pertence a um usuario administrador
+        '403':
+          description: Token não validado, acesso negado!
   /register/administrator:
     post:
       summary: Registra um novo administrador para o sistema
@@ -68,7 +70,9 @@ paths:
         '200':
           description: Usuário criado
         '401':
-          description: Usuário não criado | Um usuário com este CPF já existe! | Um usuário com este nome já existe! | Um usuário com este e-mail já existe! | Um usuário já existe com as informações passadas! | Ocorreu um erro no registro do usuário. | Tempo expirado, tente de novo! | Ocorreu um erro + erro | CPF inválido
+          description: Usuário não criado | Um usuário com este CPF já existe! | Um usuário com este nome já existe! | Um usuário com este e-mail já existe! | Um usuário já existe com as informações passadas! | Ocorreu um erro no registro do usuário. | Tempo expirado, tente de novo! | Ocorreu um erro + erro | CPF inválido | Token de autorização não pertence a um usuario administrador
+        '403':
+          description: Token não validado, acesso negado!
   /login:
     get:
       summary: Realiza o login do usuário
@@ -123,7 +127,7 @@ paths:
           required: true
           description: A senha do administrador para login.
         - in: query
-          name: CPF
+          name: cpf
           schema:
             type: string
           required: true
@@ -200,7 +204,9 @@ paths:
                     status: 1
                     criado_por: 1
         '401':
-          description: Um erro ocorreu na listagem dos dados + error | Tipo deve ser 0 (Para usuários) ou 1 (Para administradores)
+          description: Um erro ocorreu na listagem dos dados + error | Tipo deve ser 0 (Para usuários) ou 1 (Para administradores) | Token de autorização não pertence a um usuario administrador
+        '403':
+          description: Token não validado, acesso negado!
         '404':
           description: Não foram encontrados dados!
   /alterar/status:
@@ -239,7 +245,7 @@ paths:
         '200':
           description: Status não alterado pois o usuário já está no estado que quer determinar | Status alterado para (status desejado)
         '401':
-          description: Apenas é possível alterar para "Ativo" valor 1 ou "Desativado" valor 0 | Não é possível alterar o status do seu próprio usuário, peça para outro administrador faze-lo | Está faltando dados para realizar a solicitação, segue o que já se possui + lista de informações encontradas | Ocorreu um erro durante a alteração dos dados + erro
+          description: Apenas é possível alterar para "Ativo" valor 1 ou "Desativado" valor 0 | Não é possível alterar o status do seu próprio usuário, peça para outro administrador faze-lo | Está faltando dados para realizar a solicitação, segue o que já se possui + lista de informações encontradas | Ocorreu um erro durante a alteração dos dados + erro | Token de autorização não pertence a um usuario administrador
         '404':
           description: Not found
         '500':
@@ -282,7 +288,9 @@ paths:
         '400':
           description: Algum erro ocorreu! + erro
         '401':
-          description: Este item já existe no estoque! | Um erro ocorreu na validação dos dados + erro
+          description: Este item já existe no estoque! | Um erro ocorreu na validação dos dados + erro | Token de autorização não pertence a um usuario administrador
+        '403':
+          description: Token não validado, acesso negado!
   /listar/itens:
     get:
       summary: Lista itens do estoque (Apenas itens litaveis)
@@ -298,7 +306,9 @@ paths:
                 items:
                   type: object
         '401':
-          description: Algum erro ocorreu! + erro | Um erro ocorreu na listagem dos dados + erro
+          description: Algum erro ocorreu! + erro | Um erro ocorreu na listagem dos dados + erro | Token de autorização não pertence a um usuario administrador
+        '403':
+          description: Token não validado, acesso negado!
         '404':
           description: Não foram encontrados dados!
         '500':
@@ -318,7 +328,9 @@ paths:
                 items:
                   type: object
         '401':
-          description: Algum erro ocorreu! + erro | Um erro ocorreu na listagem dos dados + erro
+          description: Algum erro ocorreu! + erro | Um erro ocorreu na listagem dos dados + erro | Token de autorização não pertence a um usuario administrador
+        '403':
+          description: Token não validado, acesso negado!
         '404':
           description: Não foram encontrados dados!
         '500':
@@ -347,6 +359,10 @@ paths:
           description: Listagem não alterada pois o item já está no estado que quer determinar | Listagem alterada para (Listar ou Não listar)
         '400':
           description: Algum erro ocorreu! + erro | Um erro ocorreu durante a alteração dos dados + erro
+        '401':
+          description: Token de autorização não pertence a um usuario administrador
+        '403':
+          description: Token não validado, acesso negado!
         '404':
           description: Internal server error
   /alterar/quantidade:
@@ -371,7 +387,9 @@ paths:
         '200':
           description: Não fora realizada alterações efetivas pois o item já está na quantidade determinada | Quantidade alterada para (quantidade definida)
         '401':
-          description: Algum erro ocorreu! + erro | Um erro ocorreu durante a alteração dos dados + erro
+          description: Algum erro ocorreu! + erro | Um erro ocorreu durante a alteração dos dados + erro | Token de autorização não pertence a um usuario administrador
+        '403':
+          description: Token não validado, acesso negado!
   /registro/pedido:
     post:
       summary: Registra um novo pedido
@@ -398,7 +416,9 @@ paths:
         '200':
           description: Pedido registrado com sucesso!
         '401':
-          description: Algum erro ocorreu + erro | Algo ocorreu + erro | Um erro ocorreu na validação dos dados + erro
+          description: Algum erro ocorreu + erro | Algo ocorreu + erro | Um erro ocorreu na validação dos dados + erro | Token de autorização não pertence a um usuario administrador
+        '403':
+        description: Token não validado, acesso negado!
 components:
   securitySchemes:
     bearerAuth:

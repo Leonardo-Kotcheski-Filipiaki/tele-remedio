@@ -475,6 +475,7 @@ export default class Usuarios {
     async validaInfos(user, validador){
         try{
             let result = validador.parse(user);
+            console.log(user)
             if(result){
                 user.data_nascimento = new Date(user.data_nascimento);
                 if(Object.keys(user).includes('cpf') && user.nome != 'ADM DEFAULT'){
