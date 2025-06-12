@@ -102,8 +102,7 @@ router.get('/login/administrador/interno', (req, res) => {
         const user = {
             nome: req.query.nome,
             senha: req.query.senha,
-            cpf: req.query.cpf,
-            email: req.query.email
+            cpf: req.query.cpf
         }
         realizarLoginAdm(user).then(result => {
             if(Object.keys(result).includes('idadministradores') && Object.keys(result).includes('nome') && Object.keys(result).includes('CPF') && Object.keys(result).includes('email')){
