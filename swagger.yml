@@ -128,13 +128,6 @@ paths:
             type: string
           required: true
           description: O CPF do administrador para login (formato XXX.XXX.XXX-XX).
-        - in: query
-          name: email
-          schema:
-            type: string
-            format: email
-          required: true
-          description: O email do administrador para login.
       responses:
         '200':
           description: Retorna um access_token para adm, id, nome, cpf e email
