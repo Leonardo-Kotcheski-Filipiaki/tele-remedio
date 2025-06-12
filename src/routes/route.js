@@ -15,7 +15,7 @@ const router = Router();
 
 router.get('/', (req, res) => {
  res.send("Aqui deu ein!");
-}
+})
 
 // #region Rotas pra usuarios e administradores;
  
