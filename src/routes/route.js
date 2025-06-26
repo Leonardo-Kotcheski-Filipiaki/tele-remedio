@@ -9,7 +9,7 @@ import {authTokenValidation, authTokenValidationAdm} from '../middleware/authori
 import gerarJwtHas from '../../assets/utils/jwtGeneratorHash.js';
 import { registrarItemCon, listarItemCon, alterarListagem, alterarQuantidade } from '../controller/estoqueController.js';
 import { alterarStatusCon, realizarLogin, realizarLoginAdm, registrarAdministradorCon, registrarUsuarioCon, listarUsuariosCon } from '../controller/userController.js';
-import { registrarReq } from '../controller/pedidosController.js';
+import { modificarStatus, registrarReq } from '../controller/pedidosController.js';
 const router = Router();
 
 
@@ -335,6 +335,26 @@ router.patch('/alterar/quantidade', authTokenValidationAdm, (req, res) => {
             pedido['criador'] = parseInt(req.query.criador);
             parseInt(req.query.criador);
             registrarReq(pedido).then(result => {
+                if(Object.keys(result).includes('msg')){
+                    res.status(result.code).send(result.msg);
+                }
+            }).catch(err => {
+                res.send(err);
+            })
+            
+        } catch (e) {
+            res.status(404).send(e);
+        }
+    })
+
+    /**
+     * Rota para alterar o status do pedido
+     * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
+     */
+    router.patch('/alterar/pedido', authTokenValidationAdm, (req, res) => {
+        try {
+            const {status, id} = req.query;
+            modificarStatus(status, id).then(result => {
                 if(Object.keys(result).includes('msg')){
                     res.status(result.code).send(result.msg);
                 }

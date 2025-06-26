@@ -79,31 +79,11 @@ CREATE TABLE IF NOT EXISTS `teleremedio`.`pedidos` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `teleremedio`.`pedidos_estoque` (
-  `pedidos_pedidos_id` INT NOT NULL,
-  `pedidos_usuarios_user_id` INT NOT NULL,
-  `estoque_item_id` INT NOT NULL,
-  `estoque_criado_por` INT NOT NULL,
-  `quantidade` INT NOT NULL,
-  PRIMARY KEY (`pedidos_pedidos_id`, `pedidos_usuarios_user_id`, `estoque_item_id`, `estoque_criado_por`),
-  INDEX `fk_pedidos_has_estoque_estoque1_idx` (`estoque_item_id` ASC, `estoque_criado_por` ASC) VISIBLE,
-  INDEX `fk_pedidos_has_estoque_pedidos1_idx` (`pedidos_pedidos_id` ASC, `pedidos_usuarios_user_id` ASC) VISIBLE,
-  CONSTRAINT `fk_pedidos_has_estoque_pedidos1`
-    FOREIGN KEY (`pedidos_pedidos_id` , `pedidos_usuarios_user_id`)
-    REFERENCES `teleremedio`.`pedidos` (`pedidos_id` , `usuarios_user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_pedidos_has_estoque_estoque1`
-    FOREIGN KEY (`estoque_item_id` , `estoque_criado_por`)
-    REFERENCES `teleremedio`.`estoque` (`item_id` , `criado_por`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
 INSERT INTO administradores(nome, senha, CPF, email) VALUES('ADM DEFAULT', '19222', '00000000000', 'admdefault@empress.com');
 
 SELECT * FROM administradores;
 SELECT * FROM usuarios;
+SELECT * FROM pedidos;
 SELECT (u.user_id) AS cod, u.nome, u.cpf, u.idade, u.telefone, u.data_nascimento, u.email, u.endereco, u.status, (u.administradores_idadministradores) as criado_por FROM usuarios u;
 SELECT (ad.idadministradores) AS cod, ad.nome, ad.cpf, ad.email, ad.status, ad.criado_por FROM administradores ad;
 
