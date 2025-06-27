@@ -79,6 +79,30 @@ CREATE TABLE IF NOT EXISTS `teleremedio`.`pedidos` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS `teleremedio`.`historico_pedidos` (
+  `historico_id` INT NOT NULL AUTO_INCREMENT COMMENT 'ID único do registro no histórico',
+  `pedido_id` INT NOT NULL COMMENT 'Chave estrangeira para o pedido',
+  `usuario_id` INT NOT NULL COMMENT 'Referência ao usuário dono do pedido',
+  `status` VARCHAR(45) NOT NULL COMMENT 'Novo status do pedido',
+  `data_alteracao` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Data e hora da alteração',
+  `observacao` TEXT NULL COMMENT 'Observações sobre a mudança de status',
+  `alterado_por` INT NOT NULL COMMENT 'ID do administrador que alterou o pedido',
+  PRIMARY KEY (`historico_id`),
+  INDEX `fk_historico_pedidos_pedidos_idx` (`pedido_id`, `usuario_id`),
+  INDEX `fk_historico_pedidos_admin_idx` (`alterado_por`),
+  CONSTRAINT `fk_historico_pedidos_pedidos`
+    FOREIGN KEY (`pedido_id`, `usuario_id`)
+    REFERENCES `teleremedio`.`pedidos` (`pedidos_id`, `usuarios_user_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_historico_pedidos_admin`
+    FOREIGN KEY (`alterado_por`)
+    REFERENCES `teleremedio`.`administradores` (`idadministradores`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+)
+ENGINE = InnoDB;
+
 INSERT INTO administradores(nome, senha, CPF, email) VALUES('ADM DEFAULT', '19222', '00000000000', 'admdefault@empress.com');
 
 SELECT * FROM administradores;
