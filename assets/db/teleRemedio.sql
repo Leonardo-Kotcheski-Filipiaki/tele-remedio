@@ -80,26 +80,33 @@ CREATE TABLE IF NOT EXISTS `teleremedio`.`pedidos` (
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `teleremedio`.`historico_pedidos` (
-  `historico_id` INT NOT NULL AUTO_INCREMENT COMMENT 'ID único do registro no histórico',
-  `pedido_id` INT NOT NULL COMMENT 'Chave estrangeira para o pedido',
-  `usuario_id` INT NOT NULL COMMENT 'Referência ao usuário dono do pedido',
-  `status` VARCHAR(45) NOT NULL COMMENT 'Novo status do pedido',
-  `data_alteracao` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Data e hora da alteração',
-  `observacao` TEXT NULL COMMENT 'Observações sobre a mudança de status',
-  `alterado_por` INT NOT NULL COMMENT 'ID do administrador que alterou o pedido',
-  PRIMARY KEY (`historico_id`),
-  INDEX `fk_historico_pedidos_pedidos_idx` (`pedido_id`, `usuario_id`),
-  INDEX `fk_historico_pedidos_admin_idx` (`alterado_por`),
-  CONSTRAINT `fk_historico_pedidos_pedidos`
+  `id_historico` INT NOT NULL AUTO_INCREMENT COMMENT 'ID único para o histórico',
+  `pedido_id` INT NOT NULL COMMENT 'ID do pedido',
+  `usuario_id` INT NOT NULL COMMENT 'ID do usuário que fez o pedido',
+  `status_anterior` VARCHAR(45) DEFAULT NULL COMMENT 'Status anterior do pedido',
+  `status_novo` VARCHAR(45) NOT NULL COMMENT 'Novo status atribuído',
+  `alterado_por_admin_id` INT DEFAULT NULL COMMENT 'Se alterado por administrador',
+  `alterado_por_user_id` INT DEFAULT NULL COMMENT 'Se alterado pelo próprio usuário',
+  `data_alteracao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Data e hora da alteração',
+  PRIMARY KEY (`id_historico`),
+  
+  CONSTRAINT `fk_historico_pedido`
     FOREIGN KEY (`pedido_id`, `usuario_id`)
     REFERENCES `teleremedio`.`pedidos` (`pedidos_id`, `usuarios_user_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_historico_pedidos_admin`
-    FOREIGN KEY (`alterado_por`)
+
+  CONSTRAINT `fk_historico_admin`
+    FOREIGN KEY (`alterado_por_admin_id`)
     REFERENCES `teleremedio`.`administradores` (`idadministradores`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+
+  CONSTRAINT `fk_historico_user`
+    FOREIGN KEY (`alterado_por_user_id`)
+    REFERENCES `teleremedio`.`usuarios` (`user_id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
 )
 ENGINE = InnoDB;
 

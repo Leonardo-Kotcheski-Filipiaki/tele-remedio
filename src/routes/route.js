@@ -11,6 +11,7 @@ import { registrarItemCon, listarItemCon, alterarListagem, alterarQuantidade } f
 import { alterarStatusCon, realizarLogin, realizarLoginAdm, registrarAdministradorCon, registrarUsuarioCon, listarUsuariosCon } from '../controller/userController.js';
 import { modificarStatus, registrarReq } from '../controller/pedidosController.js';
 const router = Router();
+import { listarHistoricoPedido } from '../controller/pedidosController.js';
 
 
 router.get('/', (req, res) => {
@@ -351,20 +352,59 @@ router.patch('/alterar/quantidade', authTokenValidationAdm, (req, res) => {
      * Rota para alterar o status do pedido
      * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
      */
-    router.patch('/alterar/pedido', authTokenValidationAdm, (req, res) => {
+    router.patch('/alterar/pedido', authTokenValidation, async (req, res) => {
         try {
-            const {status, id} = req.query;
-            modificarStatus(status, id).then(result => {
-                if(Object.keys(result).includes('msg')){
-                    res.status(result.code).send(result.msg);
-                }
-            }).catch(err => {
-                res.send(err);
-            })
+            const { status, id } = req.query;
             
-        } catch (e) {
-            res.status(404).send(e);
+            if (!status || !id) {
+                return res.status(400).json({
+                    code: 400,
+                    msg: "Parâmetros 'status' e 'id' são obrigatórios"
+                });
+            }
+
+            const resultado = await modificarStatus(
+                status, 
+                id, 
+                req.user.id, 
+                {
+                    tipo: req.user.tipo,
+                    id: req.user.id
+                }
+            );
+            
+            res.status(resultado.code).json(resultado);
+
+        } catch (error) {
+            console.error("Erro na rota:", error);
+            res.status(500).json({
+                code: 500,
+                msg: "Erro interno no processamento",
+                erro: error.message
+            });
         }
-    })
+    });
+
+    /**
+    * Rota para listar o histórico de um pedido
+    * @author Bernardo dos Santos Brussius Bebrussius
+    */
+    // Rota para histórico de pedidos (protegida por auth)
+    router.get('/pedidos/:id/historico', authTokenValidation, async (req, res) => {
+        try {
+            const pedidoId = parseInt(req.params.id);
+            const resultado = await listarHistoricoPedido(pedidoId, req.user); // Passa o usuário autenticado
+            
+            return res.status(resultado.code).json(resultado);
+
+        } catch (error) {
+            console.error('Erro na rota de histórico:', error);
+            return res.status(500).json({
+                success: false,
+                code: 500,
+                msg: 'Falha crítica ao processar a requisição'
+            });
+        }
+    });
 // #endregion
 export default router;
