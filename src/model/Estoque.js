@@ -192,7 +192,7 @@ export default class Estoque {
     async quantidade(data){
         return await new Promise(async (resolve, reject) => {
             try {
-                let query = "UPDATE estoque SET quantidade = ? WHERE item_id = ?";
+                let query = "UPDATE estoque SET quantidade = quantidade - ? WHERE item_id = ?";
                 conn.connect();
                 conn.query(query, [data.valor, parseInt(data.item_id)], (err, res) => {
                     if(err){

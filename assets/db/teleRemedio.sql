@@ -103,10 +103,13 @@ CREATE TABLE IF NOT EXISTS `teleremedio`.`historico_pedidos` (
 )
 ENGINE = InnoDB;
 
+UPDATE estoque SET quantidade = quantidade-1 WHERE item_id = 1;
+
 INSERT INTO administradores(nome, senha, CPF, email) VALUES('ADM DEFAULT', '19222', '00000000000', 'admdefault@empress.com');
 
 SELECT * FROM administradores;
 SELECT * FROM usuarios;
+SELECT * FROM estoque;
 SELECT * FROM pedidos;
 SELECT (u.user_id) AS cod, u.nome, u.cpf, u.idade, u.telefone, u.data_nascimento, u.email, u.endereco, u.status, (u.administradores_idadministradores) as criado_por FROM usuarios u;
 SELECT (ad.idadministradores) AS cod, ad.nome, ad.cpf, ad.email, ad.status, ad.criado_por FROM administradores ad;

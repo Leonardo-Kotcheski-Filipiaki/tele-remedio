@@ -48,6 +48,19 @@ export default class Pedidos {
                                     code: 401
                                 });
                             } else if (res) {
+                                items.items.forEach(async i => {
+                                    const e = new Estoque();
+
+                                    await e.quantidade({item_id: i.id, valor: i.qtd}).then(res => {
+                                        if(!res.code == 200){
+                                            reject({
+                                                msg: "Houve um problema no desconto do estoque!",
+                                                code:500
+                                            });
+                                        }
+                                    })
+                                })
+
                                 resolve({
                                     msg: `Pedido registrado com sucesso!`,
                                     code: 200
