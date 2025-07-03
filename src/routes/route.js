@@ -9,7 +9,7 @@ import {authTokenValidation, authTokenValidationAdm} from '../middleware/authori
 import gerarJwtHas from '../../assets/utils/jwtGeneratorHash.js';
 import { registrarItemCon, listarItemCon, alterarListagem, alterarQuantidade } from '../controller/estoqueController.js';
 import { alterarStatusCon, realizarLogin, realizarLoginAdm, registrarAdministradorCon, registrarUsuarioCon, listarUsuariosCon } from '../controller/userController.js';
-import { modificarStatus, registrarReq } from '../controller/pedidosController.js';
+import { listar, modificarStatus, registrarReq } from '../controller/pedidosController.js';
 const router = Router();
 
 
@@ -337,6 +337,60 @@ router.patch('/alterar/quantidade', authTokenValidationAdm, (req, res) => {
             registrarReq(pedido).then(result => {
                 if(Object.keys(result).includes('msg')){
                     res.status(result.code).send(result.msg);
+                }
+            }).catch(err => {
+                res.send(err);
+            })
+            
+        } catch (e) {
+            res.status(404).send(e);
+        }
+    })
+
+    /**
+     * Rota para listar pedidos
+     * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
+     */
+    router.get('/listar/pedidos', authTokenValidation, (req, res) => {
+        try {
+            let dados = {};
+            if(!req.query.id){
+                res.status(404).send('ID não informado');
+            }
+            if(req.query.user){
+                dados['user'] = req.query.user; 
+            }
+            dados['id'] = req.query.id;
+            listar(dados).then(result => {
+                if(Object.keys(result).includes('content')){
+                    res.status(result.code).send(result.content);
+                } else if (Object.keys(result).includes('msg')){
+                    res.status(result.code).send(result.msg)
+                } else {
+                    res.status(500).send('Erro desconhecido, reporte a administração');
+                }
+            }).catch(err => {
+                res.send(err);
+            })
+            
+        } catch (e) {
+            res.status(404).send(e);
+        }
+    })
+
+    /**
+     * Rota para listar pedidos
+     * @author Leonardo Kotches Filipiaki devleonardokofi@gmail.com 
+     */
+    router.get('/listar/pedidos/todos', authTokenValidationAdm, (req, res) => {
+        try {
+            listar(null, true).then(result => {
+                if(Object.keys(result).includes('content')){
+                    res.status(result.code).send(result.content);
+                } else if (Object.keys(result).includes('msg')){
+                    res.status(result.code).send(result.msg)
+                } else {
+                    res.status(500).send('Erro desconhecido, reporte a administração');
                 }
             }).catch(err => {
                 res.send(err);

@@ -9,9 +9,9 @@ import Pedidos from "../model/Pedidos.js";
  * @param {Object} data Dados do pedido para registro, é esperado um objeto.
  */
 export async function registrarReq(data){
-    const e = new Pedidos();
+    const p = new Pedidos();
     let result;
-    await e.registrarPedido(data).then(res => {
+    await p.registrarPedido(data).then(res => {
         result = res;
     }).catch(err => {
         result = err
@@ -20,17 +20,30 @@ export async function registrarReq(data){
     return result;
 }
 
+export async function listar(dados = null, todos = null){
+    const p = new Pedidos();    
+
+    let result;
+    
+    await p.listarPedido(dados, todos).then(res => {
+        result = res;
+    }).catch(err => {
+        result = err
+    })
+    return result;
+}
+
 export async function modificarStatus(status, id){
-    const e = new Pedidos();
+    const p = new Pedidos();
     const statusPossives = ["em andamento", "concluído", "sem sucesso", "cancelado"];
     let result;
     if(statusPossives.includes(status.toLowerCase())){
-        await e.validarPedido(status, id).then(async res => {
+        await p.validarPedido(status, id).then(async res => {
             if(Object.keys(res).includes('msg')){
                 result = res;
             }
             if(res == true){
-                await e.alterarStatus(status, id).then(res => {
+                await p.alterarStatus(status, id).then(res => {
                     if(res){
                         result = res;
                     }

@@ -104,6 +104,46 @@ export default class Estoque {
     }
 
     /**
+     * Função para retornar todos os itens
+     * @author Leonardo Kotches Filipiaki devleonardokofi
+     * @param {number} [id] id do item
+     */
+    async listarItem(id){
+        return new Promise(async (resolve, reject) => {
+            try {
+                console.log(id)
+                let query = `SELECT e.nome_produto FROM estoque e WHERE e.item_id = ${id}`;
+                conn.connect();
+                conn.query(query, (err, res) => {
+                    if(err){
+                        reject({
+                            msg: `Algum erro ocorreu! ${JSON.stringify(err)}`,
+                            code: 401
+                        });
+                    } else {
+                        if(res.length < 1){
+                            reject({
+                                msg: `Não foram encontrados dados!`,
+                                code: 404
+                            });
+                        } else {
+                            resolve({
+                                code: 202,
+                                content: res
+                            });
+                        }
+                    } 
+                })
+            } catch (error) {
+                reject({
+                    msg: `Um erro ocorreu na listagem dos dados ${JSON.stringify(error)}`,
+                    code: 401
+                })
+            }
+        })
+    }
+
+    /**
      * Função para alterar e negar listagem do item!
      * @author Leonardo Kotches Filipiaki devleonardokofi
      * @param {Object} data É esperado o id do item a ser alterado e o valor do "listar"
