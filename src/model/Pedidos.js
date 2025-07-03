@@ -3,6 +3,7 @@
  */
 import {z} from 'zod';
 import {conn} from '../../server.js';
+import Estoque from './Estoque.js';
 
 
 export default class Pedidos {
@@ -113,24 +114,75 @@ export default class Pedidos {
     /**
      * Função para listar o pedido por id
      * @author Leonardo Kotches Filipiaki devleonardokofi
-     * @param {number} id id do pedido a ser listado
+     * @param {object} dados dados a listar o pedido
+     * @param {null} [todos=null] 
      */
-    async listarPedido(id){
+    async listarPedido(dados = null, todos = null){
         return new Promise(async (resolve, reject) => {
             try {
-                let query = "SELECT * FROM pedidos p WHERE p.pedido_id = ?"
+                let query;
+                if(todos != null){
+                    query = "SELECT * FROM pedidos";
+                }else if(dados.user){
+                    query = `SELECT p.pedidos_id AS cod, p.items, p.status, p.data_pedido, p.data_prevista, p.usuarios_user_id AS solicitante FROM pedidos p WHERE p.pedidos_id = ? AND p.usuarios_user_id = ${dados.user}`
+                } else {
+                    query = "SELECT * FROM pedidos p WHERE p.pedidos_id = ?"
+                }
                 conn.connect();
-                conn.query(query, [parseInt(id)], (err, res) => {
+                conn.query(query, todos != null ? [] : [parseInt(dados.id)], async (err, res) => { 
                     if(err){
                         reject({
                             msg: "Ocorreu um erro na listagem dos pedidos "+err,
                             code: 401
                         });
                     }
-                    if(res.length > 0) {
-
-                        
-                    } else {
+                    if(res.length == 1) {
+                        let e = new Estoque();
+                        res = res[0];
+                        let itemsList = res.items;
+                        itemsList = await Promise.all(itemsList.map(async i => {
+                            await e.listarItem(i.id).then(res => {
+                                i['nome'] = res.content[0].nome_produto;
+                            }).catch(error => {
+                                reject({
+                                    code: 401,
+                                    msg: "Ocorreu um erro "+error
+                                })
+                            })
+                            return i
+                        }))
+                        res.items = itemsList
+                        res.data_pedido = res.data_pedido.toLocaleDateString('pt-BR');
+                        res.data_prevista = res.data_prevista.toLocaleDateString('pt-BR');
+                        resolve({
+                            code: 200,
+                            content: res
+                        });
+                    } else if(res.length > 1){
+                        let e = new Estoque();
+                        res = await Promise.all(res.map(async result => {
+                            let itemsList = result.items;
+                            itemsList = await Promise.all(itemsList.map(async i => {
+                                await e.listarItem(i.id).then(resIntern => {
+                                    i['nome'] = resIntern.content[0].nome_produto;
+                                }).catch(error => {
+                                    reject({
+                                        code: 401,
+                                        msg: "Ocorreu um erro "+error
+                                    })
+                                })
+                                return i
+                            }))
+                            result.items = itemsList
+                            result.data_pedido = result.data_pedido.toLocaleDateString('pt-BR');
+                            result.data_prevista = result.data_prevista.toLocaleDateString('pt-BR');
+                            return result
+                        }))
+                        resolve({
+                            code: 200,
+                            content: res
+                        });
+                    }else {
                         reject({
                             msg: "Nenhum pedido encontrado!",
                             code: 404
