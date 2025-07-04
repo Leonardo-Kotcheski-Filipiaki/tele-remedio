@@ -111,7 +111,6 @@ export default class Estoque {
     async listarItem(id){
         return new Promise(async (resolve, reject) => {
             try {
-                console.log(id)
                 let query = `SELECT e.nome_produto FROM estoque e WHERE e.item_id = ${id}`;
                 conn.connect();
                 conn.query(query, (err, res) => {

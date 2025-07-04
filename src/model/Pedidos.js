@@ -72,6 +72,8 @@ export default class Pedidos {
                                 });
                             }
                         })
+                    } else if(res.code){
+                        reject(res);
                     }
                 }).catch(err => {
                     reject(err);
@@ -137,7 +139,7 @@ export default class Pedidos {
                 if(todos != null){
                     query = "SELECT * FROM pedidos";
                 }else if(dados.user){
-                    query = `SELECT p.pedidos_id AS cod, p.items, p.status, p.data_pedido, p.data_prevista, p.usuarios_user_id AS solicitante FROM pedidos p WHERE p.pedidos_id = ? AND p.usuarios_user_id = ${dados.user}`
+                    query = `SELECT p.pedidos_id AS cod, p.items, p.status, p.data_pedido, p.data_prevista, p.data_alteracao, p.usuarios_user_id AS solicitante FROM pedidos p WHERE p.pedidos_id = ? AND p.usuarios_user_id = ${dados.user}`
                 } else {
                     query = "SELECT * FROM pedidos p WHERE p.pedidos_id = ?"
                 }
@@ -167,6 +169,7 @@ export default class Pedidos {
                         res.items = itemsList
                         res.data_pedido = res.data_pedido.toLocaleDateString('pt-BR');
                         res.data_prevista = res.data_prevista.toLocaleDateString('pt-BR');
+                        res.data_alteracao = res.data_alteracao.toLocaleDateString('pt-BR');
                         resolve({
                             code: 200,
                             content: res
@@ -189,6 +192,7 @@ export default class Pedidos {
                             result.items = itemsList
                             result.data_pedido = result.data_pedido.toLocaleDateString('pt-BR');
                             result.data_prevista = result.data_prevista.toLocaleDateString('pt-BR');
+                            result.data_alteracao = result.data_alteracao.toLocaleDateString('pt-BR');
                             return result
                         }))
                         resolve({
@@ -256,7 +260,18 @@ export default class Pedidos {
             try{
                 let result = validador.parse(items);
                 if(result){
-                    resolve(1)
+                    await this.verificarQuantidade(items.items).then(res => {
+                        resolve(1);
+                    }).catch(err => {
+                        if(err.code){
+                            reject(err);
+                        } else if (err == false){
+                            reject({
+                                msg: "Quantidade insuficiente em estoque!",
+                                code: 401
+                            });
+                        }
+                    })
                 }
             }catch(err){
                 reject({
@@ -303,5 +318,30 @@ export default class Pedidos {
             }
         })
     }
+
+    async verificarQuantidade(items){
+        return await new Promise(async (resolve, reject) => {
+                try{
+                    let query = "SELECT true FROM estoque e WHERE e.item_id = ? AND e.quantidade >= ?";
+                    items.forEach(i => {
+                        conn.connect();
+                        conn.query(query, [parseInt(i.id), parseInt(i.qtd)], (err, res) => {
+                            if(Object.keys(res).length == 0){
+                                reject(false);
+                            }
+                        })
+                    })
+
+                    setTimeout(() => {
+                        resolve(true);
+                    }, 5000)
+                } catch(err){
+                    reject({
+                        msg: `Um erro ocorreu na validação do pedido ${err}`,
+                        code: 401
+                    })
+                }
+        }
+    )}
 }
 

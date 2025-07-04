@@ -69,6 +69,9 @@ CREATE TABLE IF NOT EXISTS `teleremedio`.`pedidos` (
   `data_pedido` TIMESTAMP NOT NULL,
   `data_prevista` DATETIME NOT NULL,
   `usuarios_user_id` INT NOT NULL,
+  `data_alteracao` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Data e hora da alteração',
+  `observacao` TEXT NULL COMMENT 'Observações sobre a mudança de status',
+  `alterado_por` INT NULL COMMENT 'ID do administrador que alterou o pedido',
   PRIMARY KEY (`pedidos_id`, `usuarios_user_id`),
   UNIQUE INDEX `pedidos_id_UNIQUE` (`pedidos_id` ASC) VISIBLE,
   INDEX `fk_pedidos_usuarios1_idx` (`usuarios_user_id` ASC) VISIBLE,
@@ -79,31 +82,7 @@ CREATE TABLE IF NOT EXISTS `teleremedio`.`pedidos` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `teleremedio`.`historico_pedidos` (
-  `historico_id` INT NOT NULL AUTO_INCREMENT COMMENT 'ID único do registro no histórico',
-  `pedido_id` INT NOT NULL COMMENT 'Chave estrangeira para o pedido',
-  `usuario_id` INT NOT NULL COMMENT 'Referência ao usuário dono do pedido',
-  `status` VARCHAR(45) NOT NULL COMMENT 'Novo status do pedido',
-  `data_alteracao` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Data e hora da alteração',
-  `observacao` TEXT NULL COMMENT 'Observações sobre a mudança de status',
-  `alterado_por` INT NOT NULL COMMENT 'ID do administrador que alterou o pedido',
-  PRIMARY KEY (`historico_id`),
-  INDEX `fk_historico_pedidos_pedidos_idx` (`pedido_id`, `usuario_id`),
-  INDEX `fk_historico_pedidos_admin_idx` (`alterado_por`),
-  CONSTRAINT `fk_historico_pedidos_pedidos`
-    FOREIGN KEY (`pedido_id`, `usuario_id`)
-    REFERENCES `teleremedio`.`pedidos` (`pedidos_id`, `usuarios_user_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_historico_pedidos_admin`
-    FOREIGN KEY (`alterado_por`)
-    REFERENCES `teleremedio`.`administradores` (`idadministradores`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-)
-ENGINE = InnoDB;
-
-UPDATE estoque SET quantidade = quantidade-1 WHERE item_id = 1;
+SELECT true FROM estoque e WHERE e.item_id = 1 AND e.quantidade > 3000;
 
 INSERT INTO administradores(nome, senha, CPF, email) VALUES('ADM DEFAULT', '19222', '00000000000', 'admdefault@empress.com');
 
