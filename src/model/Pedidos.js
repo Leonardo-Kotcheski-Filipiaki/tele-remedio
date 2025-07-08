@@ -93,12 +93,15 @@ export default class Pedidos {
      * @param {string} status status do pedido
      * @param {integer} id Id do pedido
      */
-    async alterarStatus(status, id){
+    async alterarStatus(status, id, alterador, descricao){
         return new Promise(async (resolve, reject) => {
             try {
-                let query = "UPDATE pedidos SET status = ? WHERE pedidos_id = ?"
+                let data = new Date()
+                data = `${data.getFullYear()}-${data.getMonth()}-${data.getDate()} ${data.getHours()}:${data.getMinutes()}:`.concat(
+                data.getSeconds().toFixed().length < 2 ? "".concat(data.getSeconds()) : data.getSeconds());
+                let query = "UPDATE pedidos SET status = ?, data_alteracao = ?, observacao = ?, alterado_por = ? WHERE pedidos_id = ?"
                 conn.connect();
-                conn.query(query, [status, parseInt(id)], (err, res) => {
+                conn.query(query, [status, data, descricao, parseInt(alterador), parseInt(id)], (err, res) => {
                     if(err){
                         reject({
                             msg: "Ocorreu um erro na alteração dos pedidos "+err,
@@ -137,11 +140,13 @@ export default class Pedidos {
             try {
                 let query;
                 if(todos != null){
-                    query = "SELECT * FROM pedidos";
-                }else if(dados.user){
-                    query = `SELECT p.pedidos_id AS cod, p.items, p.status, p.data_pedido, p.data_prevista, p.data_alteracao, p.usuarios_user_id AS solicitante FROM pedidos p WHERE p.pedidos_id = ? AND p.usuarios_user_id = ${dados.user}`
+                    query = "SELECT p.pedidos_id AS cod, p.items, p.status, p.observacao, p.data_pedido, p.data_prevista, p.data_alteracao, p.usuarios_user_id AS solicitante, u.nome, u.telefone, u.endereco FROM pedidos p JOIN usuarios u ON u.user_id = p.usuarios_user_id";
+                }else if(dados.user && dados.id){
+                    query = `SELECT p.pedidos_id AS cod, p.items, p.status, p.observacao, p.data_pedido, p.data_prevista, p.data_alteracao, p.usuarios_user_id AS solicitante, u.nome, u.telefone, u.endereco FROM pedidos p JOIN usuarios u ON u.user_id = p.usuarios_user_id WHERE p.pedidos_id = ? AND p.usuarios_user_id = ${dados.user}`
+                }else if(dados.user && !dados.id){
+                    query = `SELECT p.pedidos_id AS cod, p.items, p.status, p.observacao, p.data_pedido, p.data_prevista, p.data_alteracao, p.usuarios_user_id AS solicitante, u.nome, u.telefone, u.endereco FROM pedidos p JOIN usuarios u ON u.user_id = p.usuarios_user_id WHERE p.usuarios_user_id = ${dados.user}`
                 } else {
-                    query = "SELECT * FROM pedidos p WHERE p.pedidos_id = ?"
+                    query = "SELECT * FROM pedidos p JOIN usuarios u ON u.user_id = p.usuarios_user_id WHERE p.pedidos_id = ?"
                 }
                 conn.connect();
                 conn.query(query, todos != null ? [] : [parseInt(dados.id)], async (err, res) => { 

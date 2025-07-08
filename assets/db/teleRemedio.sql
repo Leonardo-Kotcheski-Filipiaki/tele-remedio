@@ -82,8 +82,6 @@ CREATE TABLE IF NOT EXISTS `teleremedio`.`pedidos` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-SELECT true FROM estoque e WHERE e.item_id = 1 AND e.quantidade > 3000;
-
 INSERT INTO administradores(nome, senha, CPF, email) VALUES('ADM DEFAULT', '19222', '00000000000', 'admdefault@empress.com');
 
 SELECT * FROM administradores;

@@ -153,9 +153,9 @@ paths:
           description: Ocorreu um erro no retorno do usuário. | Não foi encontrado um usuário com as credenciais passadas | Um erro ocorreu na validação dos dados
   /listar/usuarios/todos:
     get:
-      summary: Lista todos os usuários
       security:
         - bearerAuth: []
+      summary: Lista todos os usuários
       parameters:
         - in: query
           name: tipo
@@ -292,9 +292,9 @@ paths:
           description: Token não validado, acesso negado!
   /listar/itens:
     get:
-      summary: Lista itens do estoque (Apenas itens litaveis)
       security:
         - bearerAuth: []
+      summary: Lista itens do estoque (Apenas itens litaveis)
       responses:
         '202':
           description: Lista de itens recebida com sucesso!
@@ -314,9 +314,9 @@ paths:
           description: Internal server error
   /listar/itens/todos:
     get:
-      summary: Lista todos os itens
       security:
         - bearerAuth: []
+      summary: Lista todos os itens
       responses:
         '202':
           description: Lista de itens recebida com sucesso!
@@ -415,9 +415,108 @@ paths:
         '200':
           description: Pedido registrado com sucesso!
         '401':
-          description: Algum erro ocorreu + erro | Algo ocorreu + erro | Um erro ocorreu na validação dos dados + erro | Token de autorização não pertence a um usuario administrador
+          description: Algum erro ocorreu + erro | Algo ocorreu + erro | Um erro ocorreu na validação dos dados + erro | Token de autorização não pertence a um usuario administrador | Um erro ocorreu na datação dos dados + erro descrito | Quantidade insuficiente em estoque!
         '403':
         description: Token não validado, acesso negado!
+        '500':
+        description: Houve um problema no desconto do estoque!
+  /alterar/pedido:
+    post:
+      summary: Altera o status do pedido
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+          required: true
+          description: Status a ser registrado
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID do pedido
+        - in: query
+          name: alterador
+          schema:
+            type: integer
+          required: true
+          description: ID de quem realiza a alteracao no pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                descricao: "3° Tentativa de entrega, cliente não estava em casa"
+      responses:
+        '200':
+          description: Status alterado com sucesso para *status requerido* | Nenhuma alteração foi realizada, confira se o estado já está como deseja | Pedido já está com o status requerido!
+        '401':
+          description: Ocorreu um erro na alteração dos pedidos + erro descrito | Um erro ocorreu na validação dos dados + erro descrito | Algum erro ocorreu e não foi possível validar o pedido | Um erro ocorreu na validação do pedido + erro descrito
+        '403':
+        description: Token não validado, acesso negado!
+        '500':
+        description: Erro desconhecido, reporte a administração
+  /listar/pedidos:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Lista o pedido do ID, pode ser acrescentado o ID do usuário para maior certeza dos dados.
+      parameters:
+          - in: query
+            name: id
+            schema:
+              type: integer
+            required: true
+            description: ID do pedido
+          - in: query
+            name: user
+            schema:
+              type: integer
+            description: ID usuário que está sendo consultado
+      responses:
+        '200':
+            description: Lista de pedidos do usuário
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    type: object
+        '401':
+            description: Ocorreu um erro + erro descrito | Um erro ocorreu na validação dos dados + erro descrito | Ocorreu um erro na listagem dos pedidos + erro descrito
+        '403':
+            description: Token não validado, acesso negado!
+        '404':
+            description: Nenhum pedido encontrado! | ID de pedido ou usuário não informado
+        '500':
+            description: Erro desconhecido, reporte a administração
+  /listar/pedidos/todos:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Lista todos os pedidos com as informações dos usuários para entrega
+      responses:
+        '200':
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '401':
+          description: Ocorreu um erro + erro descrito | Um erro ocorreu na validação dos dados + erro descrito | Ocorreu um erro na listagem dos pedidos + erro descrito
+        '403':
+          description: Token não validado, acesso negado!
+        '404':
+          description: Nenhum pedido encontrado!
+        '500':
+          description: Erro desconhecido, reporte a administração
 components:
   securitySchemes:
     bearerAuth:

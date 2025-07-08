@@ -33,7 +33,7 @@ export async function listar(dados = null, todos = null){
     return result;
 }
 
-export async function modificarStatus(status, id){
+export async function modificarStatus(status, id, alterador, descricao){
     const p = new Pedidos();
     const statusPossives = ["em andamento", "concluído", "sem sucesso", "cancelado"];
     let result;
@@ -43,7 +43,7 @@ export async function modificarStatus(status, id){
                 result = res;
             }
             if(res == true){
-                await p.alterarStatus(status, id).then(res => {
+                await p.alterarStatus(status, id, alterador, descricao).then(res => {
                     if(res){
                         result = res;
                     }

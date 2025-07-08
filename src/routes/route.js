@@ -354,8 +354,8 @@ router.patch('/alterar/quantidade', authTokenValidationAdm, (req, res) => {
     router.get('/listar/pedidos', authTokenValidation, (req, res) => {
         try {
             let dados = {};
-            if(!req.query.id){
-                res.status(404).send('ID não informado');
+            if(!req.query.id && !req.query.user){
+                res.status(404).send('ID de pedido ou usuário não informado');
             }
             if(req.query.user){
                 dados['user'] = req.query.user; 
@@ -407,8 +407,9 @@ router.patch('/alterar/quantidade', authTokenValidationAdm, (req, res) => {
      */
     router.patch('/alterar/pedido', authTokenValidationAdm, (req, res) => {
         try {
-            const {status, id} = req.query;
-            modificarStatus(status, id).then(result => {
+            const {status, id, alterador} = req.query;
+            const {descricao} = req.body;
+            modificarStatus(status, id, alterador, descricao).then(result => {
                 if(Object.keys(result).includes('msg')){
                     res.status(result.code).send(result.msg);
                 }
