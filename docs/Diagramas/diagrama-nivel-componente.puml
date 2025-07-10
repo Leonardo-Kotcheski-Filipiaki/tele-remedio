@@ -15,6 +15,7 @@ Boundary(apiBoundary, "Módulos do Backend") {
 Rel(controllerPedidos, models, "Usa")
 Rel(controllerUsuarios, models, "Usa")
 Rel(controllerEstoque, models, "Usa")
+Rel(controllerEstoque, middlewareJWT, "Valida token JWT")
 Rel(controllerPedidos, middlewareJWT, "Valida token JWT")
 Rel(controllerUsuarios, middlewareJWT, "Valida token JWT")
 Rel(models, db, "Lê/Escreve", "SQL")
