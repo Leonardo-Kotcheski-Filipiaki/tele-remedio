@@ -69,7 +69,7 @@ export async function alterarListagem(item){
 export async function alterarQuantidade(item){
     const e = new Estoque();
     let result;
-    await e.quantidade(item).then(res => {
+    await e.alterarQuantidade(item).then(res => {
         result = res;
     }).catch(err => {
         result = err
