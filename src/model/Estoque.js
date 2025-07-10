@@ -223,6 +223,45 @@ export default class Estoque {
     };
 
     /**
+     * Função para alterar a quantidade do item
+     * @author Leonardo Kotches Filipiaki devleonardokofi
+     * @param {Object} data
+     * @returns Objeto
+     */
+    async alterarQuantidade(data){
+        return await new Promise(async (resolve, reject) => {
+            try {
+                let query = '';
+                if(data.tipo == 0){
+                    query = "UPDATE estoque SET quantidade = quantidade + ? WHERE item_id = ?";
+                } else {
+                    query = "UPDATE estoque SET quantidade = quantidade - ? WHERE item_id = ?";
+                }
+                conn.connect();
+                conn.query(query, [data.valor, parseInt(data.item_id)], (err, res) => {
+                    if(err){
+                        reject({
+                            msg: `Algum erro ocorreu! ${JSON.stringify(err)}`,
+                            code: 401
+                        });
+                    } else {
+                        if(res.affectedRows == 1){
+                            resolve({
+                                msg: `Quantidade ${data.tipo == 0 ? "aumentada em "+data.valor : "subtraida em "+data.valor}!`,
+                                code: 200
+                            });
+                        };
+                    };
+                });
+            } catch (error) {
+                reject({
+                    msg: `Um erro ocorreu durante a alteração dos dados ${JSON.stringify(error)}`,
+                    code: 401
+                });
+            };
+        });
+    };
+    /**
      * Função que realiza a validação dos dados do item para registro no estoque.
      * @author Leonardo Kotches Filipiaki devleonardokofi
      * @param {Object} item Dados do item para registro, é esperado um objeto para comparação com o Objeto de validação Item
