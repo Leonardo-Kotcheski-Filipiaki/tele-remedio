@@ -304,10 +304,15 @@ router.patch('/alterar/quantidade', authTokenValidationAdm, (req, res) => {
         if(req.query.quant < 0){
             res.status(401).send('Apenas é possível alterar a quantidade para um número negativo');
         };
+     
+        if(req.query.tipo > 1 || req.query.tipo < 0) {
+            res.status(401).send('Tipo deve ser 1 (Subtrair) ou 0 (Adição)');
+        }
         
         const item = {
             item_id: req.query.id,
-            valor: req.query.quant
+            valor: req.query.quant,
+            tipo: req.query.tipo
         };
         
         alterarQuantidade(item).then(result => {
