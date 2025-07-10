@@ -382,6 +382,12 @@ paths:
             type: integer
           required: true
           description: ID do item a ser alterado
+        - in: query
+          name: tipo
+          schema:
+            type: integer
+          required: true
+          description: 0 para adicionar | 1 para subtrair.
       responses:
         '200':
           description: Não fora realizada alterações efetivas pois o item já está na quantidade determinada | Quantidade alterada para (quantidade definida)
