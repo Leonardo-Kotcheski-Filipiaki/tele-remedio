@@ -146,7 +146,7 @@ export default class Pedidos {
                 }else if(dados.user && !dados.id){
                     query = `SELECT p.pedidos_id AS cod, p.items, p.status, p.observacao, p.data_pedido, p.data_prevista, p.data_alteracao, p.usuarios_user_id AS solicitante, u.nome, u.telefone, u.endereco FROM pedidos p JOIN usuarios u ON u.user_id = p.usuarios_user_id WHERE p.usuarios_user_id = ${dados.user}`
                 } else {
-                    query = "SELECT * FROM pedidos p JOIN usuarios u ON u.user_id = p.usuarios_user_id WHERE p.pedidos_id = ?"
+                    query = "SELECT p.pedidos_id AS cod, p.items, p.status, p.observacao, p.data_pedido, p.data_prevista, p.data_alteracao, p.usuarios_user_id AS solicitante, u.nome, u.telefone, u.endereco FROM pedidos p JOIN usuarios u ON u.user_id = p.usuarios_user_id WHERE p.pedidos_id = ?"
                 }
                 conn.connect();
                 conn.query(query, todos != null ? [] : [parseInt(dados.id)], async (err, res) => { 
