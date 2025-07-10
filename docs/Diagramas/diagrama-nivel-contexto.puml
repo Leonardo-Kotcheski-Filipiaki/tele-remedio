@@ -1,0 +1,14 @@
+@startuml c4-context
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(usuario, "Usuário", "Pessoa que solicita remédios pelo sistema.")
+Person(administrador, "Administrador", "Responsável por aprovar e gerenciar os pedidos.")
+Person(entregador, "Entregador", "Responsável por realizar as entregas.")
+
+System(sistema, "Sistema Tele-Remédio", "Aplicativo web para solicitação e entrega gratuita de medicamentos pelo SUS.")
+
+Rel(usuario, sistema, "Solicita medicamentos")
+Rel(administrador, sistema, "Gerencia e aprova pedidos")
+Rel(entregador, sistema, "Visualiza e entrega pedidos aprovados")
+
+@enduml

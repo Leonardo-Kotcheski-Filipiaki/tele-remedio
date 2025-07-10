@@ -1,0 +1,21 @@
+@startuml c4-container
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(usuario, "Usuário")
+Person(administrador, "Administrador")
+Person(entregador, "Entregador")
+
+System_Boundary(teleRemedio, "Sistema Tele-Remédio") {
+  Container(webFrontend, "Frontend", "N/A (futuro)", "Interface gráfica para usuários, administradores e entregadores.")
+  Container(api, "API Backend", "Node.js + Express", "Camada de negócio e controle da aplicação.")
+  ContainerDb(db, "Banco de Dados", "MySQL", "Armazena usuários, pedidos, estoques e histórico de alterações.")
+}
+
+Rel(usuario, webFrontend, "Usa")
+Rel(administrador, webFrontend, "Usa")
+Rel(entregador, webFrontend, "Usa")
+
+Rel(webFrontend, api, "Faz requisições", "REST/JSON")
+Rel(api, db, "Lê/Escreve dados", "SQL")
+
+@enduml

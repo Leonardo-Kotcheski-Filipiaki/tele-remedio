@@ -1,0 +1,22 @@
+@startuml c4-component
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+Container(api, "API Backend", "Node.js (Express)", "Gerencia pedidos de medicamentos.")
+ContainerDb(db, "Banco de Dados", "MySQL")
+
+Boundary(apiBoundary, "Módulos do Backend") {
+  Component(controllerPedidos, "pedidosController", "Express Controller", "Controla as requisições de pedidos.")
+  Component(controllerUsuarios, "userController", "Express Controller", "Gerencia autenticação e dados dos usuários.")
+  Component(controllerEstoque, "estoqueController", "Express Controller", "Gerencia controle de estoque.")
+  Component(middlewareJWT, "Authorization Middleware", "Middleware", "Valida o token JWT nas requisições.")
+  Component(models, "Models ORM", "Sequelize", "Mapeia entidades no banco de dados.")
+}
+
+Rel(controllerPedidos, models, "Usa")
+Rel(controllerUsuarios, models, "Usa")
+Rel(controllerEstoque, models, "Usa")
+Rel(controllerPedidos, middlewareJWT, "Valida token JWT")
+Rel(controllerUsuarios, middlewareJWT, "Valida token JWT")
+Rel(models, db, "Lê/Escreve", "SQL")
+
+@enduml
