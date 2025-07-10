@@ -9,7 +9,7 @@ Boundary(apiBoundary, "Módulos do Backend") {
   Component(controllerUsuarios, "userController", "Express Controller", "Gerencia autenticação e dados dos usuários.")
   Component(controllerEstoque, "estoqueController", "Express Controller", "Gerencia controle de estoque.")
   Component(middlewareJWT, "Authorization Middleware", "Middleware", "Valida o token JWT nas requisições.")
-  Component(models, "Models ORM", "Sequelize", "Mapeia entidades no banco de dados.")
+  Component(models, "Models", "Mapeia entidades no banco de dados.")
 }
 
 Rel(controllerPedidos, models, "Usa")
