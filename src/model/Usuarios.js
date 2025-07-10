@@ -476,8 +476,8 @@ export default class Usuarios {
             let result = validador.parse(user);
             if(result){
                 user.data_nascimento = new Date(user.data_nascimento);
+                user.cpf = user.cpf.replaceAll('.', '').replaceAll('-', '');
                 if(Object.keys(user).includes('cpf') && user.nome != 'ADM DEFAULT'){
-                    user.cpf = user.cpf.replaceAll('.', '').replaceAll('-', '');
                     await cpfValidator(user.cpf).then(res => {
                         result = res;
                     }).catch(rej => {
