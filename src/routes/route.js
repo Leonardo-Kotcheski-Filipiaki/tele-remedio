@@ -186,7 +186,7 @@ router.patch('/alterar/status', authTokenValidationAdm, async (req, res) => {
         const data = {
             user_id: req.query.id,
             realizador_id: req.query.idRealizador,
-            tipo: req.query.tipo, //administradores ou usuarios
+            tipo: req.query.tipo.toLowerCase(), //administradores ou usuarios
             status: req.query.status
         };
 
