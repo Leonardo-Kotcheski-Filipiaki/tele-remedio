@@ -181,23 +181,23 @@ router.patch('/alterar/status', authTokenValidationAdm, async (req, res) => {
             res.status(401).send('Apenas é possível alterar para "Ativo" valor 1 ou "Desativado" valor 0');
         } else if(req.query.tipo == 'administradores' && req.query.id == req.query.idRealizador){
             res.status(401).send('Não é possível alterar o status do seu próprio usuário, peça para outro administrador faze-lo');
+        } else {
+            const data = {
+                user_id: req.query.id,
+                realizador_id: req.query.idRealizador,
+                tipo: req.query.tipo.toLowerCase(), //administradores ou usuarios
+                status: req.query.status
+            };
+
+            alterarStatusCon(data).then(result => {
+                if(Object.keys(result).includes('msg')){
+                    res.status(result.code).send(result.msg);
+                }
+            })
+            .catch(err => {
+                res.send(err);
+            });
         }
-
-        const data = {
-            user_id: req.query.id,
-            realizador_id: req.query.idRealizador,
-            tipo: req.query.tipo.toLowerCase(), //administradores ou usuarios
-            status: req.query.status
-        };
-
-        alterarStatusCon(data).then(result => {
-            if(Object.keys(result).includes('msg')){
-                res.status(result.code).send(result.msg);
-            }
-        })
-        .catch(err => {
-            res.send(err);
-        });
     } catch (e) {
         res.status(404).send(e);
     };
