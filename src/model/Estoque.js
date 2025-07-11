@@ -47,7 +47,7 @@ export default class Estoque {
                             } else {
                                 resolve({
                                     msg: `Item ${item.nome_produto} registrado com sucesso!`,
-                                    code: 200
+                                    code: 201
                                 });
                             } 
                         })
@@ -108,7 +108,7 @@ export default class Estoque {
      * @author Leonardo Kotches Filipiaki devleonardokofi
      * @param {number} [id] id do item
      */
-    async listarItem(id){
+    async listarItemPedido(id){
         return new Promise(async (resolve, reject) => {
             try {
                 let query = `SELECT e.nome_produto FROM estoque e WHERE e.item_id = ${id}`;

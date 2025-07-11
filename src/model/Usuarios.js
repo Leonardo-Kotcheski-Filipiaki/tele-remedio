@@ -118,7 +118,7 @@ export default class Usuarios {
                         } else if (res.affectedRows == 1){
                             resolve({
                                 msg: "Usuario criado",
-                                code: 200
+                                code: 201
                             });
                         } else {
                             reject({
@@ -157,7 +157,7 @@ export default class Usuarios {
                 if(data === undefined || data.length < 1 || data === null){
                     resolve({
                         msg: "Não foram recebidas informações suficiêntes para registro",
-                        code: 401 
+                        code: 401
                     });
                 };
                 let result = 0;
@@ -202,7 +202,7 @@ export default class Usuarios {
                         } else if (res.affectedRows == 1){
                             resolve({
                                 msg: "Usuário criado",
-                                code: 200
+                                code: 201
                             });
                         } else {
                             reject({

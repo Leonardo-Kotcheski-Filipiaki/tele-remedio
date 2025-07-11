@@ -7,7 +7,9 @@ import Usuario from '../model/Usuarios.js';
  */
 export function authTokenValidation(req, res, next){
     try {
-        if(req.headers['authorization'].length < 1){
+        if(!req.headers['authorization']){
+            res.status(404).send('No authorization code');
+        } else if(req.headers['authorization'].length < 1){
             res.status(404).send('No authorization code');
         } else {
             const authToken = req.headers['authorization'].replace('Bearer ', '');
@@ -30,7 +32,9 @@ export function authTokenValidation(req, res, next){
  * Função para validação do token JWT  
  */
 export function authTokenValidationAdm(req, res, next){
-    if(req.headers['authorization'].length < 1){
+    if(!req.headers['authorization']){
+        res.status(404).send('No authorization code');
+    } else if(req.headers['authorization'].length < 1){
         res.status(404).send('No authorization code');
     } else {
         const authToken = req.headers['authorization'].replace('Bearer ', '');

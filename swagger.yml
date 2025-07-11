@@ -37,7 +37,7 @@ paths:
                   estado: "RS"
 
       responses:
-        '200':
+        '201':
           description: Usuário criado
         '401':
           description: Usuário não criado | Um usuário com este CPF já existe! | Um usuário com este nome já existe! | Um usuário com este e-mail já existe! | Um usuário com este telefone já existe! | Um usuário já existe com as informações passadas! | Ocorreu um erro no registro do usuario. + erro | Tempo expirado, tente de novo! | Ocorreu um erro + erro | Token de autorização não pertence a um usuario administrador
@@ -67,7 +67,7 @@ paths:
                 cpf: "038.298.610-52"
                 email: "Ana@admremedio.com"
       responses:
-        '200':
+        '201':
           description: Usuário criado
         '401':
           description: Usuário não criado | Um usuário com este CPF já existe! | Um usuário com este nome já existe! | Um usuário com este e-mail já existe! | Um usuário já existe com as informações passadas! | Ocorreu um erro no registro do usuário. | Tempo expirado, tente de novo! | Ocorreu um erro + erro | CPF inválido | Token de autorização não pertence a um usuario administrador
@@ -282,7 +282,7 @@ paths:
                 quantidade: 10
                 listar: 1
       responses:
-        '200':
+        '201':
           description: Item (nome) registrado com sucesso!
         '400':
           description: Algum erro ocorreu! + erro
@@ -418,7 +418,7 @@ paths:
                   - id: 1
                     qtd: 2
       responses:
-        '200':
+        '201':
           description: Pedido registrado com sucesso!
         '401':
           description: Algum erro ocorreu + erro | Algo ocorreu + erro | Um erro ocorreu na validação dos dados + erro | Token de autorização não pertence a um usuario administrador | Um erro ocorreu na datação dos dados + erro descrito | Quantidade insuficiente em estoque!

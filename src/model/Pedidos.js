@@ -63,7 +63,7 @@ export default class Pedidos {
 
                                 resolve({
                                     msg: `Pedido registrado com sucesso!`,
-                                    code: 200
+                                    code: 201
                                 }); 
                             } else {
                                 reject({
@@ -161,7 +161,7 @@ export default class Pedidos {
                         res = res[0];
                         let itemsList = res.items;
                         itemsList = await Promise.all(itemsList.map(async i => {
-                            await e.listarItem(i.id).then(res => {
+                            await e.listarItemPedido(i.id).then(res => {
                                 i['nome'] = res.content[0].nome_produto;
                             }).catch(error => {
                                 reject({
@@ -184,7 +184,7 @@ export default class Pedidos {
                         res = await Promise.all(res.map(async result => {
                             let itemsList = result.items;
                             itemsList = await Promise.all(itemsList.map(async i => {
-                                await e.listarItem(i.id).then(resIntern => {
+                                await e.listarItemPedido(i.id).then(resIntern => {
                                     i['nome'] = resIntern.content[0].nome_produto;
                                 }).catch(error => {
                                     reject({
